@@ -67,7 +67,7 @@ library(dplyr)
 ```
 
 
-```{r, echo=FALSE}
+```{r}
 #link_ENEVIC="https://github.com/AdrianaMoCa/Grupo4_Victimizacion_Lima/raw/main/CAPITULO_300_persona.sav"
 #vict=import(link)
 #lima= vict |> filter(NOMBREPV=="LIMA")
