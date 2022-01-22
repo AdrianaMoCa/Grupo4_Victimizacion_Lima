@@ -1,0 +1,283 @@
+---
+title: "Grupo 4: Percepción de inseguridad en Lima Metropolitana"
+author: "Arriola, Mosqueira & Wray"
+date: "21/1/2022"
+output:
+  rmdformats::readthedown:
+  code_folding: show
+  self_contained: true
+  thumbnails: false
+  lightbox: false
+pkgdown:
+  as_is: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Análisis de la percepción de inseguridad en Lima Metropolitana
+
+#### Integrantes
+##### Adriana Berenice Mosqueira Carrión
+##### Joaquin Wray Guerrero
+##### Addier Giovanni Arriola Laura 
+
+
+## 1.	Planteamiento del problema
+
+### La percepción de inseguridad se entienden como la posibilidad de que ocurra algún hecho delictivo o el temor de ser víctimas de estos hechos (Costa y Romero 2011). Esta percepción de inseguridad se suele medir a través de encuestas y sirven para elaborar mejores políticas de seguridad pública focalizadas en aquellos lugares con altos índices de violencia o percepción de la misma. Desde la academia, el análisis de este fenómeno se ha concentrado en el uso de estadísticas elaboradas por sectores universitarios o privados, tales como los estudios de Costa y Romero (2011), Lopez (2014). Asimismo, estos estudios se han concentrado en analizar la tendencia de este fenómeno durante la primera década del siglo XX. 
+
+### No obstante, a partir de la segunda década, la producción sobre este fenómeno ha sido escasa. Este hecho resalta aún más debido a la existencia de data estadística producida por el Estado peruano, tal como la Encuesta Nacional Especializada sobre Victimización del 2017. Esta encuesta cuenta con valiosa información desagregada por sectores geográficos, lo cual permitiría focalizar mejor las respuesta del Estado en materia de seguridad ciudadana. Además, permitiría comprender de mejor manera, qué tipo de delitos causan mayor temor o sensación de inseguridad en determinados espacios geográficos de la ciudad de Lima. 
+
+### En ese sentido, el presente informe tiene como objetivo identificar las zonas de Lima con mayor grado de sensación de inseguridad e identificar los delitos que generan dicha sensación. Asimismo, se propone crear un indicador compuesto de inseguridad ciudadana para los distritos de la capital limeña. 
+
+
+## 2.	Pregunta de investigación
+
+### ¿Cuáles son los niveles de percepción de inseguridad en los distritos de Lima Metropolitana en el año 2017?
+
+## 3.	Objetivo principal 
+
+### Identificar los niveles de percepción de inseguridad en los distritos de Lima Metropolitana en el año 2017
+
+## 4.	Objetivos secundarios
+
+
+### - Identificar las zonas con mayor nivel de percepción de inseguridad en Lima Metropolitana en el año 2017
+
+### - Identificar los delitos que ocasionan los mayores niveles de percepción de inseguridad en Lima Metropolitana en el año 2017
+
+### - Proponer un indicador compuesto de percepción de inseguridad para los distritos de Lima Metropolitana
+
+
+## 5.	Análisis exploratorio de las variables a utilizar
+
+
+### Base en GitHub
+
+```{r}
+library(dplyr)
+library(tidyverse)
+library(rio)
+library(lubridate)
+library(data.table)
+library(ggplot2)
+library(dplyr)  
+```
+
+
+```{r, echo=FALSE}
+#link_ENEVIC="https://github.com/AdrianaMoCa/Grupo4_Victimizacion_Lima/raw/main/CAPITULO_300_persona.sav"
+#vict=import(link)
+#lima= vict |> filter(NOMBREPV=="LIMA")
+#export(lima,"vict_lima.csv")
+```
+
+```{r}
+link_lima="https://github.com/AdrianaMoCa/Grupo4_Victimizacion_Lima/raw/main/vict_lima.csv"
+```
+
+```{r}
+lima = import(link_lima)
+```
+
+## Explorando la data y variables a utilizar
+
+```{r}
+class(lima)
+dim(lima)
+```
+
+### En cuanto a la distribución de la población, se identifica que el grueso de esta se encuentra en la zona de Lima Moderna, seguido por todos aquellos distritos que conforman Lima Norte. Mientras que aquellla zona con una distribución menor correesponde a todos aquellos distritos que conforman Lima Centro.
+
+```{r}
+
+lima= lima |> 
+  mutate(Zona=
+           case_when(NOMBREDI %in% c("SANTA ROSA","PUENTE PIEDRA","ANCON","CARABAYLLO", "INDEPENDENCIA","COMAS","SAN MARTIN DE PORRES","LOS OLIVOS")~"LIMA NORTE",
+                     NOMBREDI %in% c("RIMAC","LA VICTORIA","LIMA","BREÑA","SAN LUIS")~"LIMA CENTRO",
+                     NOMBREDI %in% c("BARRANCO","SURQUILLO","LINCE","MAGDALENA DEL MAR","SANTIAGO DE SURCO","SAN MIGUEL","LA MOLINA","JESUS MARIA", "PUEBLO LIBRE","SAN BORJA","MIRAFLORES","SAN ISIDRO")~"LIMA MODERNA",
+                     NOMBREDI %in% c("LURIGANCHO","SAN JUAN DE LURIGANCHO","ATE","EL AGUSTINO","SANTA ANITA","CHACLACAYO")~"LIMA ESTE",
+                     NOMBREDI %in% c("CHORRILLOS","LURIN","PACHACAMAC","PUCUSANA","PUNTA HERMOSA","SAN JUAN DE MIRAFLORES","VILLA EL SALVADOR","VILLA MARIA DEL TRIUNFO")~"LIMA SUR",
+                     TRUE~"Ninguno"))
+
+
+table(lima$Zona)
+
+```
+
+## Victimización por zonas y por sexo en Lima Metropolitana
+
+### La victimización se encuentra por encima del 80% en todos los sectores de Lima Metropolitana. Aunque, se puede puntualizar algunas diferencias. Por ejemplo, la zona con mayor porcentaje de vicitmización es Lima Norte (88.83%) y Lima Este (88.59%), mientras que la zona con el menor porcentaje de victimización es la de Lima Moderna (80.07%).
+
+
+```{r}
+library(scales)
+
+lima= lima |> mutate(victima=
+                  case_when(C300_P4 %in% c("1")~"Sí",
+                            C300_P4 %in% c("2")~"No",
+                            TRUE~'NA'))
+lima$victima <- factor(lima$victima,
+                       levels = c("Sí", "No"))
+```
+
+```{r}
+lima |> 
+  ggplot(aes(x= victima,  group=Zona)) + 
+  geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
+  geom_text(aes( label = scales::percent(..prop..),y= ..prop.. ), stat= "count", vjust = -.5) +
+  labs(y = "Percent", fill="¿Usted cree ser víctima de algún delito?") + 
+  facet_grid(~Zona) + 
+  scale_y_continuous(labels=percent)+
+  labs(title="Porcentaje de victimización por zona de Lima", x="¿Usted cree que puede ser víctima de algún delito?")+ 
+  scale_fill_brewer(palette = "Set1") +
+  theme(legend.position = "bottom")+ 
+  theme(legend.position = "none")
+```
+
+### Si realizamos el análisis por sexo, se encuentra que existe una mayor percepción de inseguridad por parte de las mujeres, en todas las zonas. Esta diferencia es más evidente en para las zonas de Lima moderna con una diferencia mayor al 8% entre hombres (46.08%) y mujeres (53.92%), mientras que para Lima norte, Lima sur y Lima este, esta diferencia es menor: 3.64%, 2.96%, 2.66%, respectivamente. 
+
+```{r}
+library(scales)
+
+lima= lima |> mutate(sexo=
+                  case_when(C200_P7 %in% c("1")~"Hombre",
+                            C200_P7 %in% c("2")~"Mujer",
+                            TRUE~'NA'))
+lima$victima <- factor(lima$victima,
+                       levels = c("Hombre", "Mujer"))
+```
+
+```{r}
+vic_sexo <- lima[lima$C300_P4 %in% c("1"),]
+
+vic_sexo |> 
+  ggplot(aes(x= sexo,  group= C300_P4)) + 
+  geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
+  geom_text(aes( label = scales::percent(..prop..),y= ..prop.. ), stat= "count", vjust = -.5) +
+  labs(y = "Percent", fill="sexo") + 
+  facet_grid(~Zona) + 
+  scale_y_continuous(labels=percent)+
+  labs(title="Porcentaje de victimización por zona de Lima y por sexo", x="Sexo")+ 
+  scale_fill_brewer(palette = "Set1") +
+  theme(legend.position = "bottom")+ 
+  theme(legend.position = "none")
+```
+
+
+## Victimización por robo de vehículo 
+
+### En el caso del robo de vehículo, existe una clara diferencia entre Lima Moderna y el resto de sectores de Lima Metropolitana. En Lima Moderna cerca del 30% de encuestados manifestaron que sí sienten que pueden ser víctimas del robo de su vehículo, mientras que en otros sectores limeños, esta sensación no pasa del 15% de encuestados. 
+
+
+```{r echo=FALSE}
+
+lima= lima |> 
+  mutate(robo_vehiculo=
+           case_when(C300_P5_1 %in% c("0")~"No",
+                            C300_P5_1 %in% c("1")~"Sí",
+                            FALSE~'NA'))
+
+lima$robo_vehiculo <- factor(lima$robo_vehiculo,
+                       levels = c("Sí", "No", FALSE~'NA'))
+
+```
+
+```{r}
+lima |> 
+  filter(!is.na(robo_vehiculo)) |> 
+  ggplot(mapping = aes(x= robo_vehiculo,  group=Zona)) + 
+  geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
+  geom_text(aes( label = scales::percent(..prop..),
+                   y= ..prop.. ), stat= "count", vjust = -.5) + labs(y = "Percent", fill="¿Usted cree que puede ser víctima del robo de su vehículo?") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title="Porcentaje de victimización por robo de vehículo", x="¿Usted cree que puede ser víctima del robo de su vehículo?")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+theme(legend.position = "none")
+```
+
+### Además alanalizar la victimización por robo de vehículo, por sexo, se encontró que existe una mayor percepción de inseguridad por parte de las hombres, principalmente en las zonas de Lima este, donde el 60.54% de hombres señala sentirse más propensos a ser sufrir el robo de sus vehículos, mientras que el porcentaje de mujeres es de 39.46%. Este porecentaje, para los hombres, es mayor en Lima norte (61.68%), mientras que para las mujeres es menor (38.32%).
+
+```{r}
+vic_vehi <- lima[lima$C300_P5_1 %in% c("1"),]
+
+vic_vehi |> 
+  filter(!is.na(C300_P5_1)) |> 
+  ggplot(mapping = aes(x=sexo ,  group=C300_P5_1)) + 
+  geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
+  geom_text(aes( label = scales::percent(..prop..),
+                   y= ..prop.. ), stat= "count", vjust = -.5) + labs(y = "Percent", fill="¿Usted cree que puede ser víctima del robo de su vehículo?") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title="Porcentaje de victimización por robo de vehículo", x="¿Usted cree que puede ser víctima del robo de su vehículo?")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+theme(legend.position = "none")
+```
+
+## Victimización por robo de vivienda 
+
+### En el caso del robo de vivienda, se encuentra una mayor variación de acuerdo al sector de Lima Metropolitana.Lima Sur y Lima Norte son las zonas con mayor porcentaje de victimización por robo de vivienda, con 75.1% y 72.8%, respectivamente. Le siguen Lima Este con 68.5% y Lima Centro con 61.0%. La zona con menor sensación de victimización por robo de vivienda es la de Lima Moderna, con un 54.4% de encuestados.
+
+
+```{r echo=FALSE}
+lima= lima |> 
+  mutate(lima,robo_vivienda=
+                  case_when(C300_P5_2 %in% c("0")~"No",
+                            C300_P5_2 %in% c("1")~"Sí",
+                            FALSE~'NA'))
+
+lima$robo_vivienda <- factor(lima$robo_vivienda,
+                       levels = c("Sí", "No", FALSE~'NA'))
+```
+
+```{r}
+lima |> 
+  filter(!is.na(robo_vivienda)) |> 
+  ggplot(lima, mapping = aes(x= robo_vivienda,  group=Zona)) + 
+  geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
+  geom_text(aes( label = scales::percent(..prop..),
+                   y= ..prop.. ), stat= "count", vjust = -.5) + labs(y = "Percent", fill="¿Usted cree que puede ser víctima del robo de su vehículo?") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title="Porcentaje de victimización por robo de vivienda", x="¿Usted cree que puede ser víctima del robo de su vivienda?")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+theme(legend.position = "none")
+```
+
+### Además, al realizar el análisis por sexo, se identifica una mayor percepción de victimización por robo de vivienda por parte de las mujeres en todas las zonas, principalmente en Lima moderna, donde la diferencia entre hombres (44.25%) y mujeres (55.75%) es de 11.5%. Mientras que la zona que muestra una menor diferencia es Lima sur, con 1.94%. Las demás zonas muestran en promedio una diferencia del 5.06%.
+
+```{r}
+vic_viv <- lima[lima$C300_P5_2 %in% c("1"),]
+
+vic_viv |> 
+  filter(!is.na(C300_P5_2)) |> 
+  ggplot(lima, mapping = aes(x= sexo,  group=C300_P5_2)) + 
+  geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
+  geom_text(aes( label = scales::percent(..prop..),
+                   y= ..prop.. ), stat= "count", vjust = -.5) + labs(y = "Percent", fill="¿Usted cree que puede ser víctima del robo de su vehículo?") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title="Porcentaje de victimización por robo de vivienda", x="¿Usted cree que puede ser víctima del robo de su vivienda?")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+theme(legend.position = "none")
+```
+
+## Confianza en la PNP en Lima Metropolitana
+
+### De acuerdo al Gráfico de Barras, en los 5 sectores geográficos de Lima Metropolitana, más del 50% de los y las encuestadas tiene nada o poca confianza en la Policia Nacional del Perú. De todos los sectores, Lima moderna es que el manifiesta mayor confianza en la PNP (alrededor de 40% de los encuestados), mientras que Lima Sur, Lima Este y Lima Norte son los sectores con mayores niveles de desconfianza en la PNP (en los tres sectores, alrededor del 75% de la población señala su nula o poca confianza a esta institución). Como se vio anterioremente, estos tres sectores son los que presentan mayores niveles de victimización en Lima Metropolitana. Una de las razones podría ser, precisamente, su bajo nivel de confianza en las fuerzas del orden. 
+
+```{r echo=FALSE}
+lima= lima |> 
+  mutate(confianzapnp=
+                  case_when(C300_P11A_1 %in% c("1")~"Nada Confiable",
+                            C300_P11A_1 %in% c("2")~"Poco Confiable",
+                            C300_P11A_1 %in% c("3")~"Algo Confiable",
+                            C300_P11A_1 %in% c("4")~"Muy Confiable",
+                            FALSE~'NA'))
+
+lima$confianzapnp <- factor(lima$confianzapnp, levels = c("Muy Confiable", "Algo Confiable", "Poco Confiable", "Nada Confiable", FALSE~'NA'))
+
+
+```
+
+
+```{r}
+lima |> 
+  filter(!is.na(confianzapnp)) %>% 
+  ggplot(lima, mapping = aes(x=Zona,fill=confianzapnp))+geom_bar(position="fill")+labs(y="Porcentaje encuestados/as",x="Grupos de edad")+coord_flip()+ scale_y_continuous(labels=percent)+labs(title="Confianza en la PNP", x="Zona de Lima Metropolitana")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+ theme(legend.title = element_blank())
+```
+
+
+## Bibliografía
+
+### COSTA, Gino y CARLOS Romero. 2011. Inseguridad en el Perú:¿ qué hacer?. Lima: Ciudad Nuestra. 
+### LOPEZ, Noam. 2014. Inseguridad y percepción de inseguridad en Lima, Perú. Lima: Instituto de Opinión Pública de la Pontificia Universidad Católica del Perú. 
+
+
+
+
+
+
