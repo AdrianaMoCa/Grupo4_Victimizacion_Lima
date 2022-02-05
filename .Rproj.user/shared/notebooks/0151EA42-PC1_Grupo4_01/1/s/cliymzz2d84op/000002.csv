@@ -1,0 +1,5 @@
+"0","d_vict = vict |> "
+"0","    filter(victima_delito == ""Sí"") |> "
+"0","    group_by(NOMBREDI) |> "
+"0","    summarise(victima_delito = n())"
+"0","d_vict"

@@ -1,0 +1,2 @@
+"0","base_3 <- merge(base_2, d_sinviolencia, by.x = ""NOMBREDI"", "
+"0","             by.y = ""NOMBREDI"", all.x = TRUE, all.y = FALSE)"

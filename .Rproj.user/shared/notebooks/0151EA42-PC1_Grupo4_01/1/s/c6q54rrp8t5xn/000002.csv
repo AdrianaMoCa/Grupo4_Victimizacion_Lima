@@ -1,0 +1,4 @@
+"0","data_mapa1 <- shp_lima  |> "
+"0","  left_join(medoides)"
+"1","Joining, by = ""DISTRITO""
+"

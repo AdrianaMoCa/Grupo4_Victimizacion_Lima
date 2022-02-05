@@ -1,0 +1,2 @@
+"0","vivienda = lima |> "
+"0","  select(UBIGEO, NOMBREDI, Sexo, Robo_vivienda)"

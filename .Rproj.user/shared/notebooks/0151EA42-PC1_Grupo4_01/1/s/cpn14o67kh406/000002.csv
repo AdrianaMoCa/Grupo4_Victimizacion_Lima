@@ -1,0 +1,3 @@
+"0","vict_dist <- data.frame(vict_dist)"
+"0","vict_dist_1 <- vict_dist |> "
+"0","  select(Robo_vehiculo, Robo_vivienda, Robo_sinviolencia, Robo_conviolencia)"

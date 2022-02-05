@@ -1,0 +1,3 @@
+"0",""
+"0","ggplot(data = shp_lima) +"
+"0","  geom_sf(fill=""dodgerblue4"", color=""floralwhite"")  "

@@ -1,0 +1,5 @@
+"0","vict_final |> "
+"0","  select(NOMBREDI, Indicador) |>"
+"0","  arrange(desc(Indicador)) |> "
+"0","  kable() |> "
+"0","  kable_styling()"

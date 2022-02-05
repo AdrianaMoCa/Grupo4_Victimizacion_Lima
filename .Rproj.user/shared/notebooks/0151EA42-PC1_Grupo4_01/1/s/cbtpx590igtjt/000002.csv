@@ -1,0 +1,8 @@
+"0","lima$victima_delito <- factor(lima$victima_delito,"
+"0","                          labels = c(""Sí"", ""No"")) # Respetar el orden"
+"0","levels(lima$victima_delito)"
+"1","[1]"
+"1"," ""Sí"""
+"1"," ""No"""
+"1","
+"

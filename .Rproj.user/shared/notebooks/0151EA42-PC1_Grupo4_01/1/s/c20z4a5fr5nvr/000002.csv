@@ -1,0 +1,2 @@
+"0","vict = lima |> "
+"0","  select(UBIGEO, NOMBREDI, Sexo, victima_delito)"

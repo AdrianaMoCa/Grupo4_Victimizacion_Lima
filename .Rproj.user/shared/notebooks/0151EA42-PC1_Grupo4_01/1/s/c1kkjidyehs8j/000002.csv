@@ -1,0 +1,3 @@
+"0","#export(shp_lima,""shp_lima.json"")"
+"0","#link_shp_lima=""https://github.com/AdrianaMosqueira/Grupo4_Victimizacion_Lima/raw/main/Data/shp_lima.json"""
+"0","#shp_lima = import(link_shp_lima)"

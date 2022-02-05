@@ -1,0 +1,8 @@
+"0","ggplot(data_mapa) +"
+"0","  geom_sf(aes(fill = as.factor(Indicador)))+"
+"0","  labs(title = ""Mapa de Lima Metropolitana según cluster de victimización"","
+"0","       caption = ""Fuente: INEI 2017"
+"0","       Elaboración: Grupo 4"","
+"0","       x=""Longitud"","
+"0","       y=""Latitud"") +"
+"0","  scale_fill_discrete(name = ""Clusters"")"

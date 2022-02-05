@@ -1,0 +1,7 @@
+"0","vict_dist_1 |> mutate(particion=particion$clustering) |> "
+"0","  group_by(particion) |> "
+"0","  summarise("
+"0","  Robo_vivienda = mean(Robo_vivienda),"
+"0","  Robo_vehiculo = mean(Robo_vehiculo), "
+"0","  Robo_sinviolencia=mean(Robo_sinviolencia),"
+"0","  Robo_conviolencia=mean(Robo_conviolencia))"

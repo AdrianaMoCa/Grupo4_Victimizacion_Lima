@@ -1,0 +1,31 @@
+"0","library(geojsonio)"
+"2","Warning:"
+"2"," package ‘geojsonio’ was built under R version 4.1.2
+"
+"2","Registered S3 method overwritten by 'geojsonsf':
+  method        from   
+  print.geojson geojson
+"
+"2","
+Attaching package: ‘geojsonio’
+
+"
+"2","The following object is masked from ‘package:shiny’:
+
+    validate
+
+"
+"2","The following object is masked from ‘package:base’:
+
+    pretty
+
+"
+"0","library(sf)"
+"2","Warning:"
+"2"," package ‘sf’ was built under R version 4.1.2
+"
+"2","Linking to GEOS 3.9.1, GDAL 3.2.1, PROJ 7.2.1; sf_use_s2() is TRUE
+"
+"0","library(ggrepel)"
+"0","library(tidyverse)"
+"0","library(rio)"

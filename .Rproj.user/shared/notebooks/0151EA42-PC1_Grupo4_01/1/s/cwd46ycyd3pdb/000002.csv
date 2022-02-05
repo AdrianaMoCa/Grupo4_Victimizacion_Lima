@@ -1,0 +1,2 @@
+"0","con_violencia = lima |> "
+"0","  select(UBIGEO, NOMBREDI, Sexo, Robo_conviolencia)"

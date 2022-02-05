@@ -1,0 +1,2 @@
+"0","matrixcor <- cor(vict_dist_1)"
+"0","cor.plot(matrixcor)"

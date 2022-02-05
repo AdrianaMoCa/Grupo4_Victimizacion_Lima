@@ -1,0 +1,4 @@
+"0","vict_dist <- merge(base_3, d_conviolencia, by.x = ""NOMBREDI"", "
+"0","             by.y = ""NOMBREDI"", all.x = TRUE, all.y = FALSE)"
+"0",""
+"0","vict_dist[is.na(vict_dist)] <- 0"

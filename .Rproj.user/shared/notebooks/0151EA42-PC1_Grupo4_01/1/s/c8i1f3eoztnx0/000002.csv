@@ -1,0 +1,1 @@
+"0","names(medoides)[names(medoides) == 'NOMBREDI'] <- 'DISTRITO'"

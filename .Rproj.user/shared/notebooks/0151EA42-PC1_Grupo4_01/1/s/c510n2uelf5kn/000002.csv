@@ -1,0 +1,3 @@
+"0","## Para identificar el número de clusters ideal"
+"0","#resnumclust<-NbClust(vict_dist_1, distance = ""euclidean"", min.nc=2, #max.nc=10, method = ""ward.D"", index = ""alllong"")"
+"0","#fviz_nbclust(resnumclust)"

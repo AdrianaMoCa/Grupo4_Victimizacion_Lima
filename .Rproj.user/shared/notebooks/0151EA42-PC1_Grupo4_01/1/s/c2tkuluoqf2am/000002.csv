@@ -1,0 +1,2 @@
+"0","base_1 <- merge(d_vict, d_vehiculo, by.x = ""NOMBREDI"", "
+"0","             by.y = ""NOMBREDI"", all.x = TRUE, all.y = FALSE)"

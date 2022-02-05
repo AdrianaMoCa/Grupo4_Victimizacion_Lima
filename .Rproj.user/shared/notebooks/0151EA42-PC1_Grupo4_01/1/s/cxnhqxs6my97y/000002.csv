@@ -1,0 +1,1 @@
+"0","names(vict_final)[names(vict_final) == 'NOMBREDI'] <- 'DISTRITO'"

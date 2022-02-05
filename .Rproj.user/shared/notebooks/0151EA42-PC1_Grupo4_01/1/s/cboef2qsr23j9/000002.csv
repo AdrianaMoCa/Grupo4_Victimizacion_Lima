@@ -1,0 +1,5 @@
+"0","d_conviolencia = con_violencia |> "
+"0","    filter(Robo_conviolencia == ""Sí"") |> "
+"0","    group_by(NOMBREDI) |> "
+"0","    summarise(Robo_conviolencia = n())"
+"0","d_conviolencia"

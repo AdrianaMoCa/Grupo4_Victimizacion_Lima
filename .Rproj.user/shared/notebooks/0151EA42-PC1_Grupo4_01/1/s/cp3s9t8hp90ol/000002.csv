@@ -1,0 +1,4 @@
+"0","vict_dist |> "
+"0","  ggplot(aes(x = Robo_sinviolencia, y = Robo_conviolencia))+"
+"0","  geom_point()+ "
+"0","  labs( x = ""Víctima de robo sin violencia"", y = ""Víctima de robo con violencia"")"

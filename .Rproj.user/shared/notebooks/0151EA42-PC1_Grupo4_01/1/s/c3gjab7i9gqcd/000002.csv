@@ -1,0 +1,4 @@
+"0","vict_final <- vict_dist |> "
+"0","  mutate(pc1 = pc$x[,1])"
+"0",""
+"0","names(vict_final)[names(vict_final) == 'pc1'] <- 'Indicador'"

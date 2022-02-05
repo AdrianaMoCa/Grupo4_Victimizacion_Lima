@@ -1,0 +1,4 @@
+"0","data_mapa2 <- shp_lima  |> "
+"0","  left_join(diana)"
+"1","Joining, by = ""DISTRITO""
+"

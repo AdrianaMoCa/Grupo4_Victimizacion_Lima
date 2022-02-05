@@ -1,0 +1,8 @@
+"0","roboconviol_sexo <- lima[lima$Robo_conviolencia %in% c(""Sí""),]"
+"0",""
+"0","roboconviol_sexo |> "
+"0","  filter(!is.na(Robo_conviolencia)) |> "
+"0","  ggplot(lima, mapping = aes(x= Sexo,  group=Robo_conviolencia)) + "
+"0","  geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat=""count"") +"
+"0","  geom_text(aes( label = scales::percent(..prop..),"
+"0","                   y= ..prop.. ), stat= ""count"", vjust = -.5) + labs(y = ""Percent"", fill=""¿Usted cree que puede ser víctima de robo con violencia?"") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title=""Porcentaje de victimización por robo con violencia"", x=""¿Usted cree que puede ser víctima de robo con violencia?"")+ scale_fill_brewer(palette = ""Set1"")+theme(legend.position = ""bottom"")+theme(legend.position = ""none"")"
