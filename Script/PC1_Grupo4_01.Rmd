@@ -475,8 +475,8 @@ corr.test(vict_dist_1)
 ```
 
 ```{r}
-#matrixcor <- cor(vict_dist_1)
-#cor.plot(matrixcor)
+matrixcor <- cor(vict_dist_1)
+cor.plot(matrixcor)
 ```
 
 ### El test de correlación y la matriz, nos señala que el robo de vivienda tiene una alta correlación con robo sin violencia y robo con violencia. Además el robo con violencia y sin violencia, también se encuentran altamente relacionados. 
@@ -489,7 +489,12 @@ KMO(vict_dist_1)
 
 ```{r}
 library(rela)
-cortest.bartlett(matrixcor,n=dim(vict_dist_1)[1])
+library(factoextra)
+library(psych)
+```
+
+```{r}
+cortest.bartlett(matrixcor, n=dim(vict_dist_1)[1])
 ```
 
 ### El p_value es menor a 0.5, lo cual nos señala que no estamos frente a una matriz de identidad. 
@@ -528,7 +533,6 @@ pc$rotation
 
 ### Observamos la relación entre los componentes y las variables. El PC1 tiene relación positiva con todas las variables, siendo la más alta con robo sin violencia y robo con violencia. La más baja es el robo de vehículo. 
 
-
 ```{r}
 library(factoextra)
 fviz_eig(pc) 
@@ -562,11 +566,12 @@ names(vict_final)[names(vict_final) == 'pc1'] <- 'Indicador'
 
 ### Observamos que los 5 distritos con mayor percepción de inseguridad por delitos patrimoniales son San Juan de Lurigancho, Comas, San Martín de Porres, Villa María del Triunfo y Santiago de Surco. 
 
-
 ```{r}
 library(lubridate)
 library(kableExtra)
+```
 
+```{r}
 vict_final |> 
   select(NOMBREDI, Indicador) |>
   arrange(desc(Indicador)) |> 
