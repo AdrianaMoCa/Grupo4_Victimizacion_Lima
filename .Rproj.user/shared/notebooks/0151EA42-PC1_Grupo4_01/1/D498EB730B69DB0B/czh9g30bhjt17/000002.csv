@@ -1,0 +1,8 @@
+"0","names(lima)[names(lima) == 'C200_P7'] <- 'Sexo'"
+"0","names(lima)[names(lima) == 'C300_P4'] <- 'victima_delito'"
+"0","names(lima)[names(lima) == 'C300_P5_1'] <- 'Robo_vehiculo'"
+"0","names(lima)[names(lima) == 'C300_P5_2'] <- 'Robo_vivienda'"
+"0","names(lima)[names(lima) == 'C300_P5_3'] <- 'Robo_sinviolencia'"
+"0","names(lima)[names(lima) == 'C300_P5_4'] <- 'Robo_conviolencia'"
+"0","names(lima)[names(lima) == 'C300_P11A_1'] <- 'Confianza_PNP'"
+"0",""

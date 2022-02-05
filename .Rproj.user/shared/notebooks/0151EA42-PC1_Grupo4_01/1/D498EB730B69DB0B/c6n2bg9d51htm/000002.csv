@@ -1,0 +1,4 @@
+"0","data_mapa <- shp_lima  |> "
+"0","  left_join(vict_final)"
+"2","Error in check_join(x, y) : object 'vict_final' not found
+"

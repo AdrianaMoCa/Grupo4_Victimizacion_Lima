@@ -1,0 +1,8 @@
+"0","lima$Robo_sinviolencia <- factor(lima$Robo_sinviolencia,"
+"0","                          labels = c(""No"", ""Sí"")) # Respetar el orden"
+"0","levels(lima$Robo_sinviolencia)"
+"1","[1]"
+"1"," ""No"""
+"1"," ""Sí"""
+"1","
+"

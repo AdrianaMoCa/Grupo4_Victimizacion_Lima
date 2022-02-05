@@ -1,0 +1,22 @@
+"0","library(lubridate)"
+"0","library(kableExtra)"
+"2","Warning:"
+"2"," package ‘kableExtra’ was built under R version 4.1.2
+"
+"2","
+Attaching package: ‘kableExtra’
+
+"
+"2","The following object is masked from ‘package:dplyr’:
+
+    group_rows
+
+"
+"0","vict_final |> "
+"0","  select(NOMBREDI, Indicador) |>"
+"0","  arrange(desc(Indicador)) |> "
+"0","  kable() |> "
+"0","  kable_styling()"
+"2","Error in select(vict_final, NOMBREDI, Indicador) : 
+  object 'vict_final' not found
+"

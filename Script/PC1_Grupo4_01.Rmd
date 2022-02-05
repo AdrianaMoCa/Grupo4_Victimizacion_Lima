@@ -1,6 +1,6 @@
 ---
 title: "Grupo 4: Percepción de inseguridad en Lima Metropolitana"
-author: "Arriola, Mosqueira & Wray"
+author: "Arriola, Mosqueira"
 date: "21/1/2022"
 output:
   rmdformats::readthedown:
@@ -20,7 +20,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 #### Integrantes
 ##### Adriana Berenice Mosqueira Carrión
-##### Joaquin Wray Guerrero
 ##### Addier Giovanni Arriola Laura 
 
 
@@ -68,9 +67,8 @@ library(dplyr)
 
 
 ```{r}
-link_lima="https://github.com/AdrianaMoCa/Grupo4_Victimizacion_Lima/raw/main/vict_lima.csv"
+link_lima="https://github.com/AdrianaMosqueira/Grupo4_Victimizacion_Lima/raw/main/Data/vict_lima.csv"
 ```
-
 
 ```{r, include=TRUE}
 lima = import(link_lima)
@@ -82,7 +80,6 @@ lima = import(link_lima)
 class(lima)
 dim(lima)
 ```
-
 
 ```{r, include=TRUE}
 lima= lima |> 
@@ -209,7 +206,6 @@ lima$Robo_vivienda <- factor(lima$Robo_vivienda,
                           labels = c("No", "Sí")) # Respetar el orden
 levels(lima$Robo_vivienda)
 ```
-
 
 ```{r, include=TRUE}
 lima |> 
@@ -577,6 +573,193 @@ vict_final |>
   kable() |> 
   kable_styling()
 ```
+
+
+## Mapa Distrital de Lima Metropolitana
+
+### Para una mejor visualización del indicador 
+
+```{r}
+library(geojsonio)
+library(sf)
+library(ggrepel)
+library(tidyverse)
+library(rio)
+```
+
+```{r}
+link_mapa = "https://github.com/ChristianChiroqueR/banco_de_datos/raw/main/Mapas_Peru/DISTRITOS.json"
+spdf <- geojson_read(link_mapa,  what = "sp") #archivo json
+peru<-st_as_sf(spdf) # Lo convertimos a tipo sf para mayor facilidad
+```
+
+```{r}
+shp_lima <- peru |> 
+  filter(DEPARTAMEN == "LIMA")
+```
+
+```{r}
+#export(shp_lima,"shp_lima.json")
+#link_shp_lima="https://github.com/AdrianaMosqueira/Grupo4_Victimizacion_Lima/raw/main/Data/shp_lima.json"
+#shp_lima = import(link_shp_lima)
+```
+
+```{r}
+ggplot(data = shp_lima) + geom_sf()
+
+ggplot(data = shp_lima) +
+  geom_sf(fill="skyblue", color="black")  
+```
+
+```{r}
+names(vict_final)[names(vict_final) == 'NOMBREDI'] <- 'DISTRITO'
+```
+
+```{r}
+data_mapa <- shp_lima  |> 
+  left_join(vict_final)
+```
+
+```{r}
+ggplot(data_mapa) +
+  geom_sf(aes(fill = as.factor(Indicador)))+
+  labs(title = "Mapa de Lima Metropolitana según cluster de victimización",
+       caption = "Fuente: INEI 2017
+       Elaboración: Grupo 4",
+       x="Longitud",
+       y="Latitud") +
+  scale_fill_discrete(name = "Clusters")
+```
+
+# MÉTODOS 1: NO JERÁRQUICO (partición por medoides)
+
+```{r}
+library(cluster)
+library(ggrepel)
+library(psych)
+library(scatterplot3d)
+library(rgl)
+```
+
+```{r}
+distancias= daisy(vict_dist_1, metric="gower")
+```
+
+```{r}
+fviz_nbclust(vict_dist_1, pam,diss=distancias,method = "silhouette",k.max = 10,verbose = F)
+particion = pam(distancias,2,cluster.only = F)
+```
+
+```{r}
+fviz_silhouette(particion, label=TRUE)
+```
+
+```{r}
+particion$silinfo$widths |> data.frame() |> filter(sil_width<0)
+```
+
+```{r}
+vict_dist_1 |> mutate(particion=particion$clustering) |> 
+  group_by(particion) |> 
+  summarise(
+  Robo_vivienda = mean(Robo_vivienda),
+  Robo_vehiculo = mean(Robo_vehiculo), 
+  Robo_sinviolencia=mean(Robo_sinviolencia),
+  Robo_conviolencia=mean(Robo_conviolencia))
+```
+
+```{r}
+vict_dist_1$particion = particion$clustering
+vict_dist_1$particion = as.factor(vict_dist_1$particion)
+levels(vict_dist_1$particion) = c("Alto nivel de victimización", "Bajo nivel de victimización")
+table(vict_dist_1$particion)
+```
+
+```{r}
+fviz_cluster(object = list(data=vict_dist_1[,1:4], cluster = vict_dist_1$particion),
+             geom = c("text"), 
+             ellipse.type = "convex")
+```
+
+## MÉTODO JERÁRQUICO AGLOMERATIVO
+
+```{r}
+fviz_nbclust(vict_dist_1[,1:4], hcut,diss=distancias,method = "silhouette",k.max = 10,verbose = F)
+```
+
+```{r}
+aglomerativo = hcut(distancias, k = 2,hc_func='agnes',hc_method = "ward.D")
+```
+
+```{r}
+fviz_silhouette(aglomerativo, label=TRUE)  ## tiene el mismo promedio, pero solo un caso mal clasificado
+```
+
+```{r}
+aglomerativo$silinfo$widths |> data.frame() |> filter(sil_width<0)
+```
+
+```{r}
+fviz_dend(aglomerativo, rect = TRUE, cex = 0.5)
+```
+
+```{r}
+vict_dist_1 |> mutate(aglomerativo=aglomerativo$cluster) |> group_by(aglomerativo) |> 
+  summarise(
+  Robo_vivienda = mean(Robo_vivienda),
+  Robo_vehiculo = mean(Robo_vehiculo), 
+  Robo_sinviolencia=mean(Robo_sinviolencia),
+  Robo_conviolencia=mean(Robo_conviolencia))
+```
+
+```{r}
+vict_dist_1$aglomerativo = aglomerativo$cluster
+vict_dist_1$aglomerativo = as.factor(vict_dist_1$aglomerativo)
+levels(vict_dist_1$aglomerativo) = c("Alto nivel de victimización", "Bajo nivel de victimización")
+table(vict_dist_1$aglomerativo)
+```
+
+```{r}
+fviz_cluster(object = list(data=vict_dist_1[,1:4], cluster = vict_dist_1$aglomerativo),
+             geom = c("text"), 
+             ellipse.type = "convex")
+```
+
+## MÉTODO JERÁRQUICO DIVISIVO
+
+```{r}
+divisivo = hcut(distancias, k = 2,hc_func='diana')
+```
+
+```{r}
+fviz_silhouette(divisivo, label=TRUE)
+```
+
+```{r}
+divisivo$silinfo$widths |> data.frame() |> filter(sil_width<0)
+```
+
+```{r}
+fviz_dend(divisivo, rect = TRUE, cex = 0.5)
+```
+
+```{r}
+vict_dist_1$divisivo = divisivo$cluster
+vict_dist_1$divisivo = as.factor(vict_dist_1$divisivo)
+levels(vict_dist_1$divisivo) = c("Bajo nivel de victimización", "Alto nivel de victimización")
+table(vict_dist_1$divisivo)
+```
+
+```{r}
+fviz_cluster(object = list(data=vict_dist_1[,1:4], cluster = vict_dist_1$divisivo),
+             geom = c("text"), 
+             ellipse.type = "convex")
+```
+
+
+
+
+
 
 
 ## Bibliografía

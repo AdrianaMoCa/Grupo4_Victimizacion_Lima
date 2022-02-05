@@ -67,7 +67,7 @@ library(dplyr)
 
 
 ```{r}
-link_lima="https://github.com/AdrianaMoCa/Grupo4_Victimizacion_Lima/raw/main/vict_lima.csv"
+link_lima="https://github.com/AdrianaMosqueira/Grupo4_Victimizacion_Lima/raw/main/Data/vict_lima.csv"
 ```
 
 ```{r, include=TRUE}
@@ -600,7 +600,9 @@ shp_lima <- peru |>
 ```
 
 ```{r}
-export(shp_lima,"shp_lima.json")
+#export(shp_lima,"shp_lima.json")
+#link_shp_lima="https://github.com/AdrianaMosqueira/Grupo4_Victimizacion_Lima/raw/main/Data/shp_lima.json"
+#shp_lima = import(link_shp_lima)
 ```
 
 ```{r}
@@ -611,7 +613,8 @@ ggplot(data = shp_lima) +
 ```
 
 ```{r}
-
+data_mapa <- shp_lima  |> 
+  left_join(vict_final)
 ```
 
 

@@ -1,0 +1,6 @@
+"0","shp_lima = import(link_shp_lima)"
+"2","Error in parse_con(txt, bigint_as_char) : 
+  lexical error: invalid bytes in UTF8 string.
+          PROV"":""1505"",""PROVINCIA"":""CAÑETE"",""IDDIST"":""150510"",""DISTRIT
+                     (right here) ------^
+"
