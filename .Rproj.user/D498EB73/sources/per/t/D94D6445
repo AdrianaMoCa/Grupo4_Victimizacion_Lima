@@ -3,7 +3,7 @@
     "path": "~/GitHub/Grupo4_Victimizacion_Lima/Script/PC1_Grupo4_01.Rmd",
     "project_path": "Script/PC1_Grupo4_01.Rmd",
     "type": "r_markdown",
-    "hash": "2051535572",
+    "hash": "3976968062",
     "contents": "",
     "dirty": false,
     "created": 1644038919701.0,
@@ -12,16 +12,16 @@
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "630,67",
-        "scrollLine": "627",
+        "cursorPosition": "2,20",
+        "scrollLine": "0",
         "last_setup_crc32": "DA4F825Fbb338d19"
     },
     "folds": "",
-    "lastKnownWriteTime": 1644091742,
+    "lastKnownWriteTime": 1644091990,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1644091742402,
+    "last_content_update": 1644091991025,
     "read_only": false,
     "read_only_alternatives": []
 }
