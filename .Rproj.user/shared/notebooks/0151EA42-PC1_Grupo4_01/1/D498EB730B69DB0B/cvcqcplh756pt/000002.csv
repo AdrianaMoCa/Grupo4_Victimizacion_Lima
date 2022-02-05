@@ -1,0 +1,2 @@
+"0","shp_lima <- peru |> "
+"0","  filter(DEPARTAMEN == ""LIMA"")"

@@ -1,0 +1,4 @@
+"0","fviz_dend(aglomerativo, rect = TRUE, cex = 0.5)"
+"2","Warning:"
+"2"," `guides(<scale> = FALSE)` is deprecated. Please use `guides(<scale> = ""none"")` instead.
+"

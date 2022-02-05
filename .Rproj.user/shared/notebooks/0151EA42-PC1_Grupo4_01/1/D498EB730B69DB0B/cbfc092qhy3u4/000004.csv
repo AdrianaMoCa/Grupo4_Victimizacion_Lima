@@ -1,0 +1,4 @@
+"0",""
+"0","# Lo visualizamos"
+"0","ggplot(data = shp_lima) +"
+"0","  geom_sf(fill=""skyblue"", color=""black"")  #Se le agrega un relleno celeste y bordes negros"

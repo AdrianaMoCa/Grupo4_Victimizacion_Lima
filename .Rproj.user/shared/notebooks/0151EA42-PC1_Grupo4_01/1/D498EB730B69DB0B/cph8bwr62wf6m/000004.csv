@@ -1,0 +1,3 @@
+"0","link_mapa = ""https://github.com/ChristianChiroqueR/banco_de_datos/raw/main/Mapas_Peru/DISTRITOS.json"""
+"0","spdf <- geojson_read(link_mapa,  what = ""sp"") #archivo json"
+"0","peru<-st_as_sf(spdf) # Lo convertimos a tipo sf para mayor facilidad"

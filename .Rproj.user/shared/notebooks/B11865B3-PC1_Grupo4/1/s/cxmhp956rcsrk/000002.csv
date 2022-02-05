@@ -1,0 +1,5 @@
+"0","Z_vehiculo = vehiculo |> "
+"0","    filter(Robo_vehiculo == ""Sí"") |> "
+"0","    group_by(Zona) |> "
+"0","    summarise(Robo_vehiculo = n())"
+"0","Z_vehiculo"

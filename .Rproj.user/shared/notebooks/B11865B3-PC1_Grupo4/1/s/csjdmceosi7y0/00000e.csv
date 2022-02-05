@@ -1,0 +1,5 @@
+"0","D_PNP = PNP |> "
+"0","    filter(Confianza_PNP == ""Sí"") |>"
+"0","    group_by(NOMBREDI) |> "
+"0","    summarise(Confianza_PNP = n())"
+"0","D_PNP"

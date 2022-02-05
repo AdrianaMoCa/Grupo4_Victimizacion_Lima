@@ -1,0 +1,3 @@
+"0","fviz_cluster(object = list(data=data2[,1:4], cluster = data2$divisivo),"
+"0","             geom = c(""text""), "
+"0","             ellipse.type = ""convex"")"

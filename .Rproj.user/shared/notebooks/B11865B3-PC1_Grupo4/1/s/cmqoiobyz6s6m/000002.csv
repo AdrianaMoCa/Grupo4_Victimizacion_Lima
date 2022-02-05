@@ -1,0 +1,1 @@
+"0","aglomerativo$silinfo$widths |> data.frame() |> filter(sil_width<0)"

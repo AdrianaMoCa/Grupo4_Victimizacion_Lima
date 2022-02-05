@@ -1,0 +1,1 @@
+"0","vivienda = select(lima, UBIGEO, NOMBREDI, Sexo, Robo_vivienda, Zona)"

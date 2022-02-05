@@ -1,0 +1,1 @@
+"0","fviz_silhouette(aglomerativo, label=TRUE)  ## tiene el mismo promedio, pero solo un caso mal clasificado"

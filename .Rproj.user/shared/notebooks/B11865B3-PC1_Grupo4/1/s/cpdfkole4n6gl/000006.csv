@@ -1,0 +1,1 @@
+"0","fviz_nbclust(data2[,1:4], hcut,diss=distancias,method = ""silhouette"",k.max = 10,verbose = F)"

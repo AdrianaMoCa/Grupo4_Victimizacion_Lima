@@ -1,0 +1,7 @@
+"0","data2 |> mutate(particion=particion$clustering) |> "
+"0","  group_by(particion) |> "
+"0","  summarise("
+"0","  Robo_vivienda = mean(Robo_vivienda),"
+"0","  Robo_calle = mean(Robo_calle), "
+"0","  Robo_vehiculo=mean(Robo_vehiculo),"
+"0","  Confianza_PNP=mean(Confianza_PNP))"

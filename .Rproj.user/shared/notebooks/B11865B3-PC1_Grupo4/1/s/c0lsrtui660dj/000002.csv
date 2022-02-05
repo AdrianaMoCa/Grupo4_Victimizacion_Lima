@@ -1,0 +1,1 @@
+"0","aglomerativo = hcut(distancias, k = 2,hc_func='agnes',hc_method = ""ward.D"")"

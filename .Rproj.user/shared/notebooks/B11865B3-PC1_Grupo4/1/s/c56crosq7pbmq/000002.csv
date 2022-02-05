@@ -1,0 +1,8 @@
+"0","PNP$Confianza_PNP <- factor(PNP$Confianza_PNP,"
+"0","                          labels = c(""No"", ""No"", ""Sí"", ""Sí"")) # Respetar el orden"
+"0","levels(PNP$Confianza_PNP)"
+"1","[1]"
+"1"," ""No"""
+"1"," ""Sí"""
+"1","
+"

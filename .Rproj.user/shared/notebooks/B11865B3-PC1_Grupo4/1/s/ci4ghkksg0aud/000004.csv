@@ -1,0 +1,1 @@
+"0","fviz_nbclust(data2, pam,diss=distancias,method = ""silhouette"",k.max = 10,verbose = F)"

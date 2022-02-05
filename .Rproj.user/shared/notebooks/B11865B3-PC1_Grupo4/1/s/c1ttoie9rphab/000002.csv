@@ -1,0 +1,8 @@
+"0","lima$Sexo <- factor(lima$Sexo,"
+"0","                          labels = c(""Hombre"", ""Mujer"")) # Respetar el orden"
+"0","levels(lima$Sexo)"
+"1","[1]"
+"1"," ""Hombre"""
+"1"," ""Mujer"" "
+"1","
+"

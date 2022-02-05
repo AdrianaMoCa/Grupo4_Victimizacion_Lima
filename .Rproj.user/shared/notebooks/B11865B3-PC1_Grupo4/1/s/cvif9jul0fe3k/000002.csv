@@ -1,0 +1,5 @@
+"0","D_vivienda = vivienda |> "
+"0","    filter(Robo_vivienda == ""Sí"") |> "
+"0","    group_by(NOMBREDI) |> "
+"0","    summarise(Robo_vivienda = n())"
+"0","D_vivienda"

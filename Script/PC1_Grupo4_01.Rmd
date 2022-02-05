@@ -1,0 +1,591 @@
+---
+title: "Grupo 4: Percepción de inseguridad en Lima Metropolitana"
+author: "Arriola, Mosqueira & Wray"
+date: "21/1/2022"
+output:
+  rmdformats::readthedown:
+  code_folding: show
+  self_contained: true
+  thumbnails: false
+  lightbox: false
+pkgdown:
+  as_is: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Análisis de la percepción de inseguridad en Lima Metropolitana
+
+#### Integrantes
+##### Adriana Berenice Mosqueira Carrión
+##### Joaquin Wray Guerrero
+##### Addier Giovanni Arriola Laura 
+
+
+## 1.	Planteamiento del problema
+
+### La percepción de inseguridad se entienden como la posibilidad de que ocurra algún hecho delictivo o el temor de ser víctimas de estos hechos (Costa y Romero 2011). Esta percepción de inseguridad se suele medir a través de encuestas y sirven para elaborar mejores políticas de seguridad pública focalizadas en aquellos lugares con altos índices de violencia o percepción de la misma. Desde la academia, el análisis de este fenómeno se ha concentrado en el uso de estadísticas elaboradas por sectores universitarios o privados, tales como los estudios de Costa y Romero (2011), Lopez (2014). Asimismo, estos estudios se han concentrado en analizar la tendencia de este fenómeno durante la primera década del siglo XX. 
+
+### No obstante, a partir de la segunda década, la producción sobre este fenómeno ha sido escasa. Este hecho resalta aún más debido a la existencia de data estadística producida por el Estado peruano, tal como la Encuesta Nacional Especializada sobre Victimización del 2017. Esta encuesta cuenta con valiosa información desagregada por sectores geográficos, lo cual permitiría focalizar mejor las respuesta del Estado en materia de seguridad ciudadana. Además, permitiría comprender de mejor manera, qué tipo de delitos causan mayor temor o sensación de inseguridad en determinados espacios geográficos de la ciudad de Lima. 
+
+### En ese sentido, el presente informe tiene como objetivo identificar las zonas de Lima con mayor grado de sensación de inseguridad e identificar el grado de inseguridad que generan los delitos patrimoniales (robo). Asimismo, se propone crear un indicador compuesto de sensación de inseguridad ciudadana de delitos patrimoniales para los distritos de la capital limeña. 
+
+
+## 2.	Pregunta de investigación
+
+### ¿Cuáles son los niveles de percepción de inseguridad respecto a los delitos patrimoniales en los distritos de Lima Metropolitana en el año 2017?
+
+## 3.	Objetivo principal 
+
+### Identificar los niveles de percepción de inseguridad respecto a los delitos patrimoniales en los distritos de Lima Metropolitana en el año 2017
+
+## 4.	Objetivos secundarios
+
+
+### - Identificar las zonas con mayor nivel de percepción de inseguridad respecto a los delitos patrimoniales en Lima Metropolitana en el año 2017
+
+### - Identificar la percepción de inseguridad respecto a los delitos patrimoniales en Lima Metropolitana en el año 2017
+
+### - Proponer un indicador compuesto de percepción de inseguridad respecto a los delitos patrimoniales para los distritos de Lima Metropolitana
+
+
+## Análisis exploratorio de las variables a utilizar
+
+
+### Base en GitHub
+
+```{r, include=TRUE}
+library(dplyr)
+library(tidyverse)
+library(rio)
+library(lubridate)
+library(data.table)
+library(ggplot2)
+library(dplyr)  
+```
+
+
+```{r}
+link_lima="https://github.com/AdrianaMoCa/Grupo4_Victimizacion_Lima/raw/main/vict_lima.csv"
+```
+
+
+```{r, include=TRUE}
+lima = import(link_lima)
+```
+
+### Explorando la data y variables a utilizar
+
+```{r message=FALSE, warning=FALSE}
+class(lima)
+dim(lima)
+```
+
+
+```{r, include=TRUE}
+lima= lima |> 
+  mutate(Zona=
+           case_when(NOMBREDI %in% c("SANTA ROSA","PUENTE PIEDRA","ANCON","CARABAYLLO", "INDEPENDENCIA","COMAS","SAN MARTIN DE PORRES","LOS OLIVOS")~"LIMA NORTE",
+                     NOMBREDI %in% c("RIMAC","LA VICTORIA","LIMA","BREÑA","SAN LUIS")~"LIMA CENTRO",
+                     NOMBREDI %in% c("BARRANCO","SURQUILLO","LINCE","MAGDALENA DEL MAR","SANTIAGO DE SURCO","SAN MIGUEL","LA MOLINA","JESUS MARIA", "PUEBLO LIBRE","SAN BORJA","MIRAFLORES","SAN ISIDRO")~"LIMA MODERNA",
+                     NOMBREDI %in% c("LURIGANCHO","SAN JUAN DE LURIGANCHO","ATE","EL AGUSTINO","SANTA ANITA","CHACLACAYO")~"LIMA ESTE",
+                     NOMBREDI %in% c("CHORRILLOS","LURIN","PACHACAMAC","PUCUSANA","PUNTA HERMOSA","SAN JUAN DE MIRAFLORES","VILLA EL SALVADOR","VILLA MARIA DEL TRIUNFO")~"LIMA SUR",
+                     FALSE~"Ninguno"))
+
+
+table(lima$Zona)
+
+```
+
+### En cuanto a la distribución de la población encuestada, se identifica que el grueso de esta se encuentra en la zona de Lima Moderna (4366), seguido por todos aquellos distritos que conforman Lima Norte (3054). Mientras que aquellla zona con una distribución menor corresponde a todos aquellos distritos que conforman Lima Centro (1633).
+
+
+```{r, include=TRUE}
+lima$NOMBREDI = gsub("Ã‘", "Ñ", lima$NOMBREDI)
+```
+
+```{r, include=FALSE}
+names(lima)[names(lima) == 'C200_P7'] <- 'Sexo'
+names(lima)[names(lima) == 'C300_P4'] <- 'victima_delito'
+names(lima)[names(lima) == 'C300_P5_1'] <- 'Robo_vehiculo'
+names(lima)[names(lima) == 'C300_P5_2'] <- 'Robo_vivienda'
+names(lima)[names(lima) == 'C300_P5_3'] <- 'Robo_sinviolencia'
+names(lima)[names(lima) == 'C300_P5_4'] <- 'Robo_conviolencia'
+names(lima)[names(lima) == 'C300_P11A_1'] <- 'Confianza_PNP'
+
+```
+
+```{r, include=TRUE}
+lima$Sexo <- factor(lima$Sexo,
+                          labels = c("Hombre", "Mujer")) # Respetar el orden
+levels(lima$Sexo)
+```
+
+## Victimización por zonas y por sexo en Lima Metropolitana
+
+### La victimización se encuentra por encima del 80% en todos los sectores de Lima Metropolitana. Aunque, se puede puntualizar algunas diferencias. Por ejemplo, la zona con mayor porcentaje de vicitmización es Lima Norte (88.83%) y Lima Este (88.59%), mientras que la zona con el menor porcentaje de victimización es la de Lima Moderna (80.07%).
+
+```{r, include=TRUE}
+lima$victima_delito <- factor(lima$victima_delito,
+                          labels = c("Sí", "No")) # Respetar el orden
+levels(lima$victima_delito)
+```
+
+```{r, include=TRUE}
+library(scales)
+```
+
+```{r, include=TRUE}
+lima |> 
+  ggplot(aes(x= victima_delito,  group=Zona)) + 
+  geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
+  geom_text(aes( label = scales::percent(..prop..),y= ..prop.. ), stat= "count", vjust = -.5) +
+  labs(y = "Percent", fill="¿Usted cree ser víctima de algún delito?") + 
+  facet_grid(~Zona) + 
+  scale_y_continuous(labels=percent)+
+  labs(title="Porcentaje de victimización por zona de Lima", x="¿Usted cree que puede ser víctima de algún delito?")+ 
+  scale_fill_brewer(palette = "Set1") +
+  theme(legend.position = "bottom")+ 
+  theme(legend.position = "none")
+```
+
+### Si realizamos el análisis por sexo, se encuentra que existe una mayor percepción de inseguridad por parte de las mujeres, en todas las zonas. Esta diferencia es más evidente en para las zonas de Lima moderna con una diferencia mayor al 8% entre hombres (46.08%) y mujeres (53.92%), mientras que para Lima norte, Lima sur y Lima este, esta diferencia es menor: 3.64%, 2.96%, 2.66%, respectivamente. 
+
+```{r, include=TRUE}
+vict_sexo <- lima[lima$victima_delito %in% c("Sí"),]
+vict_sexo |> 
+  ggplot(aes(x= Sexo,  group= victima_delito)) + 
+  geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
+  geom_text(aes( label = scales::percent(..prop..),y= ..prop.. ), stat= "count", vjust = -.5) +
+  labs(y = "Percent", fill="Sexo") + 
+  facet_grid(~Zona) + 
+  scale_y_continuous(labels=percent)+
+  labs(title="Porcentaje de victimización por zona de Lima y por sexo", x="Sexo")+ 
+  scale_fill_brewer(palette = "Set1") +
+  theme(legend.position = "bottom")+ 
+  theme(legend.position = "none")
+```
+
+
+## Victimización por robo de vehículo 
+
+### En el caso del robo de vehículo, existe una clara diferencia entre Lima Moderna y el resto de sectores de Lima Metropolitana. En Lima Moderna cerca del 30% de encuestados manifestaron que sí sienten que pueden ser víctimas del robo de su vehículo, mientras que en otros sectores limeños, esta sensación no pasa del 15% de encuestados. 
+
+```{r, include=FALSE}
+lima$Robo_vehiculo <- factor(lima$Robo_vehiculo,
+                          labels = c("No", "Sí")) # Respetar el orden
+levels(lima$Robo_vehiculo)
+```
+
+```{r, include=TRUE}
+lima |> 
+  filter(!is.na(Robo_vehiculo)) |> 
+  ggplot(mapping = aes(x= Robo_vehiculo,  group=Zona)) + 
+  geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
+  geom_text(aes( label = scales::percent(..prop..),
+                   y= ..prop.. ), stat= "count", vjust = -.5) + labs(y = "Percent", fill="¿Usted cree que puede ser víctima del robo de su vehículo?") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title="Porcentaje de victimización por robo de vehículo", x="¿Usted cree que puede ser víctima del robo de su vehículo?")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+theme(legend.position = "none")
+```
+
+### Además al analizar la victimización por robo de vehículo, por sexo, se encontró que existe una mayor percepción de inseguridad por parte de las hombres, principalmente en las zonas de Lima este, donde el 60.54% de hombres señala sentirse más propensos a ser sufrir el robo de sus vehículos, mientras que el porcentaje de mujeres es de 39.46%. Este porcentaje, para los hombres, es mayor en Lima norte (61.68%), mientras que para las mujeres es menor (38.32%).
+
+```{r, include=TRUE}
+vehi_sexo <- lima[lima$Robo_vehiculo %in% c("Sí"),]
+vehi_sexo |> 
+  filter(!is.na(Robo_vehiculo)) |> 
+  ggplot(mapping = aes(x=Sexo ,  group=Robo_vehiculo)) + 
+  geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
+  geom_text(aes( label = scales::percent(..prop..),
+                   y= ..prop.. ), stat= "count", vjust = -.5) + labs(y = "Percent", fill="¿Usted cree que puede ser víctima del robo de su vehículo?") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title="Porcentaje de victimización por robo de vehículo", x="¿Usted cree que puede ser víctima del robo de su vehículo?")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+theme(legend.position = "none")
+```
+
+## Victimización por robo de vivienda 
+
+### En el caso del robo de vivienda, se encuentra una mayor variación de acuerdo al sector de Lima Metropolitana.Lima Sur y Lima Norte son las zonas con mayor porcentaje de victimización por robo de vivienda, con 75.1% y 72.8%, respectivamente. Le siguen Lima Este con 68.5% y Lima Centro con 61.0%. La zona con menor sensación de victimización por robo de vivienda es la de Lima Moderna, con un 54.4% de encuestados.
+
+```{r, include=FALSE}
+lima$Robo_vivienda <- factor(lima$Robo_vivienda,
+                          labels = c("No", "Sí")) # Respetar el orden
+levels(lima$Robo_vivienda)
+```
+
+
+```{r, include=TRUE}
+lima |> 
+  filter(!is.na(Robo_vivienda)) |> 
+  ggplot(lima, mapping = aes(x= Robo_vivienda,  group=Zona)) + 
+  geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
+  geom_text(aes( label = scales::percent(..prop..),
+                   y= ..prop.. ), stat= "count", vjust = -.5) + labs(y = "Percent", fill="¿Usted cree que puede ser víctima del robo de su vehículo?") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title="Porcentaje de victimización por robo de vivienda", x="¿Usted cree que puede ser víctima del robo de su vivienda?")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+theme(legend.position = "none")
+```
+
+### Además, al realizar el análisis por sexo, se identifica una mayor percepción de victimización por robo de vivienda por parte de las mujeres en todas las zonas, principalmente en Lima moderna, donde la diferencia entre hombres (44.25%) y mujeres (55.75%) es de 11.5%. Mientras que la zona que muestra una menor diferencia es Lima sur, con 1.94%. Las demás zonas muestran en promedio una diferencia del 5.06%.
+
+```{r, include=TRUE}
+vivi_sexo <- lima[lima$Robo_vivienda %in% c("Sí"),]
+
+vivi_sexo |> 
+  filter(!is.na(Robo_vivienda)) |> 
+  ggplot(lima, mapping = aes(x= Sexo,  group=Robo_vivienda)) + 
+  geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
+  geom_text(aes( label = scales::percent(..prop..),
+                   y= ..prop.. ), stat= "count", vjust = -.5) + labs(y = "Percent", fill="¿Usted cree que puede ser víctima del robo de su vehículo?") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title="Porcentaje de victimización por robo de vivienda", x="¿Usted cree que puede ser víctima del robo de su vivienda?")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+theme(legend.position = "none")
+```
+
+
+
+## Victimización por robo sin violencia 
+
+### En el caso del robo sin violencia, se aprecia que en el sector de Lima Este y Lima Norte se encuentra el mayor porcentaje de victimización con 83.9% y 82.2%, respectivamente. Mientras que los niveles son menores en el caso de Lima Sur y Lima centro, aunque con más del 70%. 
+
+```{r, include=FALSE}
+lima$Robo_sinviolencia <- factor(lima$Robo_sinviolencia,
+                          labels = c("No", "Sí")) # Respetar el orden
+levels(lima$Robo_sinviolencia)
+```
+
+
+```{r, include=TRUE}
+lima |> 
+  filter(!is.na(Robo_sinviolencia)) |> 
+  ggplot(lima, mapping = aes(x= Robo_sinviolencia,  group=Zona)) + 
+  geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
+  geom_text(aes( label = scales::percent(..prop..),
+                   y= ..prop.. ), stat= "count", vjust = -.5) + labs(y = "Percent", fill="¿Usted cree que puede ser víctima de robo sin violencia?") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title="Porcentaje de victimización por robo sin violenciaa", x="¿Usted cree que puede ser víctima de robo sin violencia?")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+theme(legend.position = "none")
+```
+
+### Además, al realizar el análisis por sexo, se identifica una mayor percepción de victimización por parte de las mujeres en todas las zonas de Lima Metropolitana. Destaca nuevamente el caso de Lima Moderna con una diferencia de más del 10%. 
+
+```{r, include=TRUE}
+robosinviol_sexo <- lima[lima$Robo_sinviolencia %in% c("Sí"),]
+
+robosinviol_sexo |> 
+  filter(!is.na(Robo_sinviolencia)) |> 
+  ggplot(lima, mapping = aes(x= Sexo,  group=Robo_sinviolencia)) + 
+  geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
+  geom_text(aes( label = scales::percent(..prop..),
+                   y= ..prop.. ), stat= "count", vjust = -.5) + labs(y = "Percent", fill="¿Usted cree que puede ser víctima de robo sin violencia?") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title="Porcentaje de victimización por robo sin violencia", x="¿Usted cree que puede ser víctima de robo sin violencia?")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+theme(legend.position = "none")
+```
+
+
+## Victimización por robo con violencia 
+
+### En el caso del robo con violencia, se aprecia que en el sector de Lima Centro y Lima Norte se encuentra el mayor porcentaje de victimización con 90.53% y 89.83%, respectivamente. Mientras que los niveles son menores en el caso de Lima Moderna con 85.10%.
+
+```{r, include=FALSE}
+lima$Robo_conviolencia <- factor(lima$Robo_conviolencia,
+                          labels = c("No", "Sí")) # Respetar el orden
+levels(lima$Robo_conviolencia)
+```
+
+
+```{r, include=TRUE}
+lima |> 
+  filter(!is.na(Robo_conviolencia)) |> 
+  ggplot(lima, mapping = aes(x= Robo_conviolencia,  group=Zona)) + 
+  geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
+  geom_text(aes( label = scales::percent(..prop..),
+                   y= ..prop.. ), stat= "count", vjust = -.5) + labs(y = "Percent", fill="¿Usted cree que puede ser víctima de robo con violencia?") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title="Porcentaje de victimización por robo con violenciaa", x="¿Usted cree que puede ser víctima de robo con violencia?")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+theme(legend.position = "none")
+```
+
+### Además, al realizar el análisis por sexo, se identifica una mayor percepción de victimización por parte de las mujeres en todas las zonas de Lima Metropolitana, excepto Lima Centro. Destaca nuevamente el caso de Lima Moderna con una diferencia de cerca al 10%. 
+
+```{r, include=TRUE}
+roboconviol_sexo <- lima[lima$Robo_conviolencia %in% c("Sí"),]
+
+roboconviol_sexo |> 
+  filter(!is.na(Robo_conviolencia)) |> 
+  ggplot(lima, mapping = aes(x= Sexo,  group=Robo_conviolencia)) + 
+  geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
+  geom_text(aes( label = scales::percent(..prop..),
+                   y= ..prop.. ), stat= "count", vjust = -.5) + labs(y = "Percent", fill="¿Usted cree que puede ser víctima de robo con violencia?") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title="Porcentaje de victimización por robo con violencia", x="¿Usted cree que puede ser víctima de robo con violencia?")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+theme(legend.position = "none")
+```
+
+
+# Construyendo un indicador de percepción de inseguridad en Lima Metropolitana por distrito
+
+
+## Primero contruimos nuestra base de datos por distrito
+
+## Siente inseguridad - victimización
+
+```{r, include=FALSE}
+vict = lima |> 
+  select(UBIGEO, NOMBREDI, Sexo, victima_delito)
+```
+
+```{r, include=TRUE}
+d_vict = vict |> 
+    filter(victima_delito == "Sí") |> 
+    group_by(NOMBREDI) |> 
+    summarise(victima_delito = n())
+d_vict
+```
+
+## Siente que puede ser víctima de robo de su vehículo
+
+```{r, include=FALSE}
+vehiculo = lima |> 
+  select(UBIGEO, NOMBREDI, Sexo, Robo_vehiculo)
+```
+
+```{r, include=TRUE}
+d_vehiculo = vehiculo |> 
+    filter(Robo_vehiculo == "Sí") |> 
+    group_by(NOMBREDI) |> 
+    summarise(Robo_vehiculo = n())
+d_vehiculo
+
+```
+
+## Siente que puede ser víctima de robo de vivienda
+
+```{r, include=FALSE}
+vivienda = lima |> 
+  select(UBIGEO, NOMBREDI, Sexo, Robo_vivienda)
+```
+
+```{r, include=TRUE}
+d_vivienda = vivienda |> 
+    filter(Robo_vivienda == "Sí") |> 
+    group_by(NOMBREDI) |> 
+    summarise(Robo_vivienda = n())
+d_vivienda
+```
+
+
+## Siente que puede ser víctima de robo sin violencia
+
+```{r, include=FALSE}
+sin_violencia = lima |> 
+  select(UBIGEO, NOMBREDI, Sexo, Robo_sinviolencia)
+```
+
+```{r, include=TRUE}
+d_sinviolencia = sin_violencia |> 
+    filter(Robo_sinviolencia == "Sí") |> 
+    group_by(NOMBREDI) |> 
+    summarise(Robo_sinviolencia = n())
+d_sinviolencia
+```
+
+## Siente que puede ser víctima de robo con violencia
+
+```{r, include=FALSE}
+con_violencia = lima |> 
+  select(UBIGEO, NOMBREDI, Sexo, Robo_conviolencia)
+```
+
+```{r, include=TRUE}
+d_conviolencia = con_violencia |> 
+    filter(Robo_conviolencia == "Sí") |> 
+    group_by(NOMBREDI) |> 
+    summarise(Robo_conviolencia = n())
+d_conviolencia
+```
+
+## Hacemos el merge
+
+```{r, include=FALSE}
+base_1 <- merge(d_vict, d_vehiculo, by.x = "NOMBREDI", 
+             by.y = "NOMBREDI", all.x = TRUE, all.y = FALSE)
+```
+
+```{r, include=TRUE}
+base_2 <- merge(base_1, d_vivienda, by.x = "NOMBREDI", 
+             by.y = "NOMBREDI", all.x = TRUE, all.y = FALSE)
+```
+
+
+```{r, include=TRUE}
+base_3 <- merge(base_2, d_sinviolencia, by.x = "NOMBREDI", 
+             by.y = "NOMBREDI", all.x = TRUE, all.y = FALSE)
+```
+
+```{r, include=TRUE}
+vict_dist <- merge(base_3, d_conviolencia, by.x = "NOMBREDI", 
+             by.y = "NOMBREDI", all.x = TRUE, all.y = FALSE)
+
+vict_dist[is.na(vict_dist)] <- 0
+```
+
+
+## Luego, empezamos explorando nuestras variables
+
+```{r}
+vict_dist |> 
+  ggplot(aes(x = victima_delito, y = Robo_vehiculo))+
+  geom_point() + 
+  labs( x = "Víctima de un delito", y = "Víctima de robo de vehículo")
+
+```
+
+
+```{r}
+vict_dist |> 
+  ggplot(aes(x = victima_delito, y = Robo_vivienda))+
+  geom_point()+ 
+  labs( x = "Víctima de un delito", y = "Víctima de robo de vivienda")
+```
+
+
+```{r}
+vict_dist |> 
+  ggplot(aes(x = victima_delito, y = Robo_sinviolencia))+
+  geom_point() + 
+  labs( x = "Víctima de un delito", y = "Víctima de robo sin violencia")
+```
+
+```{r}
+vict_dist |> 
+  ggplot(aes(x = victima_delito, y = Robo_conviolencia))+
+  geom_point() + 
+  labs( x = "Víctima de un delito", y = "Víctima de robo con vehículo")
+```
+
+```{r}
+vict_dist |> 
+  ggplot(aes(x = Robo_vehiculo, y = Robo_vivienda))+
+  geom_point() + 
+  labs( x = "Víctima de robo de vehículo", y = "Víctima de robo de vivienda")
+```
+
+```{r}
+vict_dist |> 
+  ggplot(aes(x = Robo_sinviolencia, y = Robo_conviolencia))+
+  geom_point()+ 
+  labs( x = "Víctima de robo sin violencia", y = "Víctima de robo con violencia")
+```
+
+### Parece existir relación entre algunas variables como el ser víctima de un delito y el robo de vivienda; victima de delito y robo sin violencia; victima de delito y robo con violencia; y robo con violencia y sin violencia.
+
+
+## Ahora, analizamos las relaciones entre las variables
+
+```{r}
+library(psych)
+```
+
+```{r}
+vict_dist <- data.frame(vict_dist)
+vict_dist_1 <- vict_dist |> 
+  select(Robo_vehiculo, Robo_vivienda, Robo_sinviolencia, Robo_conviolencia)
+```
+
+
+```{r}
+corr.test(vict_dist_1)
+```
+
+```{r}
+#matrixcor <- cor(vict_dist_1)
+#cor.plot(matrixcor)
+```
+
+### El test de correlación y la matriz, nos señala que el robo de vivienda tiene una alta correlación con robo sin violencia y robo con violencia. Además el robo con violencia y sin violencia, también se encuentran altamente relacionados. 
+
+```{r}
+KMO(vict_dist_1)
+```
+
+### Nuestro Overall MSA es de 0.73 lo cual es bastante aceptable. 
+
+```{r}
+library(rela)
+cortest.bartlett(matrixcor,n=dim(vict_dist_1)[1])
+```
+
+### El p_value es menor a 0.5, lo cual nos señala que no estamos frente a una matriz de identidad. 
+
+## Ahora determinamos el número de componentes
+
+
+```{r}
+scree(vict_dist_1, pc = TRUE, factor = FALSE)
+```
+
+### De acuerdo al gráfico, observamos que el codo está por encima de 1. 
+
+```{r}
+fa.parallel(vict_dist_1, fa = "pc")
+```
+
+### Nos indica que optemos por 1 componente. Ahora estandarizamos:
+
+```{r}
+pc <- prcomp(x=vict_dist_1,scale=TRUE, center=TRUE) 
+names(pc)
+```
+
+# Luego, analizamos los componentes principales calculados
+
+```{r}
+summary(pc) 
+```
+
+### Observamos que el componente 1 explica aproximadamente el 75%
+
+```{r}
+pc$rotation
+```
+
+### Observamos la relación entre los componentes y las variables. El PC1 tiene relación positiva con todas las variables, siendo la más alta con robo sin violencia y robo con violencia. La más baja es el robo de vehículo. 
+
+
+```{r}
+library(factoextra)
+fviz_eig(pc) 
+
+```
+
+### Ahora observamos graficamente la explicación de cada componente. Como se observa, el Componente 1 explica más del 70%. 
+
+```{r}
+pc$x
+```
+
+### Por último, veamos como se direccionan las variables y la explicación de cada componente. Se observa que las variables robo de vivienda, robo con violencia, robo sin violencia y víctima de un delito se encuentran juntas, mientras que robo de vehículo no se agrupa con estas. 
+
+```{r}
+fviz_pca_var(pc)
+```
+
+
+### Agregamos el PC1  a nuestra base final
+
+```{r}
+vict_final <- vict_dist |> 
+  mutate(pc1 = pc$x[,1])
+
+names(vict_final)[names(vict_final) == 'pc1'] <- 'Indicador'
+```
+
+
+## Tabla de distritos con mayor sensación de inseguridad por delitos patrimoniales
+
+### Observamos que los 5 distritos con mayor percepción de inseguridad por delitos patrimoniales son San Juan de Lurigancho, Comas, San Martín de Porres, Villa María del Triunfo y Santiago de Surco. 
+
+
+```{r}
+library(lubridate)
+library(kableExtra)
+
+vict_final |> 
+  select(NOMBREDI, Indicador) |>
+  arrange(desc(Indicador)) |> 
+  kable() |> 
+  kable_styling()
+```
+
+
+## Bibliografía
+
+### COSTA, Gino y CARLOS Romero. 2011. Inseguridad en el Perú:¿ qué hacer?. Lima: Ciudad Nuestra. 
+### LOPEZ, Noam. 2014. Inseguridad y percepción de inseguridad en Lima, Perú. Lima: Instituto de Opinión Pública de la Pontificia Universidad Católica del Perú. 
+
+
+
+
+
+

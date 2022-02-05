@@ -1,0 +1,5 @@
+"0","data2 |> mutate(aglomerativo=aglomerativo$cluster) |> group_by(aglomerativo) |> summarise("
+"0","  Robo_vivienda = mean(Robo_vivienda),"
+"0","  Robo_calle = mean(Robo_calle), "
+"0","  Robo_vehiculo=mean(Robo_vehiculo),"
+"0","  Confianza_PNP=mean(Confianza_PNP))"

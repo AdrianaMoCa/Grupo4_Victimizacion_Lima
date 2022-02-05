@@ -1,0 +1,1 @@
+"0","data1 = subset(Victimizacion_lima, select = -c(NOMBREDI) )"

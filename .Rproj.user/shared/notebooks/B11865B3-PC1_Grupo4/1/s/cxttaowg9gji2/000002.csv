@@ -1,0 +1,4 @@
+"0","#link_ENEVIC=""https://github.com/AdrianaMoCa/Grupo4_Victimizacion_Lima/raw/main/CAPITULO_300_persona.sav"""
+"0","#vict=import(link_ENEVIC)"
+"0","#lima= vict |> filter(NOMBREPV==""LIMA"")"
+"0","#export(lima,""vict_lima.csv"")"
