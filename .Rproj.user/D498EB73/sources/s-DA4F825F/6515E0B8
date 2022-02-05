@@ -3,7 +3,7 @@
     "path": "~/GitHub/Grupo4_Victimizacion_Lima/Script/app.R",
     "project_path": "Script/app.R",
     "type": "r_source",
-    "hash": "1117784523",
+    "hash": "1094229373",
     "contents": "",
     "dirty": false,
     "created": 1644088942676.0,
@@ -12,15 +12,15 @@
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "191,43",
-        "scrollLine": "167"
+        "cursorPosition": "143,270",
+        "scrollLine": "127"
     },
     "folds": "",
-    "lastKnownWriteTime": 1644091035,
+    "lastKnownWriteTime": 1644091918,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1644091035962,
+    "last_content_update": 1644091918425,
     "read_only": false,
     "read_only_alternatives": []
 }

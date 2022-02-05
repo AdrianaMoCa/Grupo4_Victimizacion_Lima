@@ -628,7 +628,7 @@ data_mapa <- shp_lima  |>
 ```{r}
 ggplot(data_mapa) +
   geom_sf(aes(fill = as.factor(Indicador)))+
-  labs(title = "Mapa de Lima Metropolitana según cluster de victimización",
+  labs(title = "Mapa de Lima Metropolitana de victimización por PCA",
        caption = "Fuente: INEI 2017
        Elaboración: Grupo 4",
        x="Longitud",

@@ -62,7 +62,7 @@ server <- function(input, output) {
     labs(y = "Percent", fill="Sexo") + 
     facet_grid(~Zona) + 
     scale_y_continuous(labels=percent)+
-    labs(title="Porcentaje de victimización por zona de Lima y por sexo", x="Sexo")+ 
+    labs(title="Porcentaje de victimización por zona de Lima", x="Sexo")+ 
     scale_fill_brewer(palette = "Set1") +
     theme(legend.position = "bottom")+ 
     theme(legend.position = "none")
@@ -87,7 +87,7 @@ server <- function(input, output) {
     ggplot(mapping = aes(x=Sexo ,  group=Robo_vehiculo)) + 
     geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
     geom_text(aes( label = scales::percent(..prop..),
-                   y= ..prop.. ), stat= "count", vjust = -.5) + labs(y = "Percent", fill="¿Usted cree que puede ser víctima del robo de su vehículo?") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title="Porcentaje de victimización por robo de vehículo", x="¿Usted cree que puede ser víctima del robo de su vehículo?")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+theme(legend.position = "none")
+                   y= ..prop.. ), stat= "count", vjust = -.5) + labs(y = "Percent", fill="¿Usted cree que puede ser víctima del robo de su vehículo?") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title="Porcentaje de victimización por robo de vehículo", x="Sexo")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+theme(legend.position = "none")
     
   })
   
@@ -109,7 +109,7 @@ server <- function(input, output) {
     ggplot(lima, mapping = aes(x= Sexo,  group=Robo_vivienda)) + 
     geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
     geom_text(aes( label = scales::percent(..prop..),
-                   y= ..prop.. ), stat= "count", vjust = -.5) + labs(y = "Percent", fill="¿Usted cree que puede ser víctima del robo de su vehículo?") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title="Porcentaje de victimización por robo de vivienda", x="¿Usted cree que puede ser víctima del robo de su vivienda?")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+theme(legend.position = "none")
+                   y= ..prop.. ), stat= "count", vjust = -.5) + labs(y = "Percent", fill="¿Usted cree que puede ser víctima del robo de su vehículo?") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title="Porcentaje de victimización por robo de vivienda", x="Sexo")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+theme(legend.position = "none")
     
   })
   
@@ -131,7 +131,7 @@ server <- function(input, output) {
     ggplot(lima, mapping = aes(x= Sexo,  group=Robo_sinviolencia)) + 
     geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
     geom_text(aes( label = scales::percent(..prop..),
-                   y= ..prop.. ), stat= "count", vjust = -.5) + labs(y = "Percent", fill="¿Usted cree que puede ser víctima de robo sin violencia?") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title="Porcentaje de victimización por robo sin violencia", x="¿Usted cree que puede ser víctima de robo sin violencia?")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+theme(legend.position = "none")
+                   y= ..prop.. ), stat= "count", vjust = -.5) + labs(y = "Percent", fill="¿Usted cree que puede ser víctima de robo sin violencia?") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title="Porcentaje de victimización por robo sin violencia", x="Sexo")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+theme(legend.position = "none")
     
   })
   
@@ -141,7 +141,7 @@ server <- function(input, output) {
       ggplot(lima, mapping = aes(x= Robo_conviolencia,  group=Zona)) + 
       geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
       geom_text(aes( label = scales::percent(..prop..),
-                     y= ..prop.. ), stat= "count", vjust = -.5) + labs(y = "Percent", fill="¿Usted cree que puede ser víctima de robo con violencia?") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title="Porcentaje de victimización por robo con violenciaa", x="¿Usted cree que puede ser víctima de robo con violencia?")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+theme(legend.position = "none")
+                     y= ..prop.. ), stat= "count", vjust = -.5) + labs(y = "Percent", fill="¿Usted cree que puede ser víctima de robo con violencia?") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title="Porcentaje de victimización por robo con violencia", x="¿Usted cree que puede ser víctima de robo con violencia?")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+theme(legend.position = "none")
     
   })
   
@@ -152,14 +152,14 @@ server <- function(input, output) {
     ggplot(lima, mapping = aes(x= Sexo,  group=Robo_conviolencia)) + 
     geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
     geom_text(aes( label = scales::percent(..prop..),
-                   y= ..prop.. ), stat= "count", vjust = -.5) + labs(y = "Percent", fill="¿Usted cree que puede ser víctima de robo con violencia?") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title="Porcentaje de victimización por robo con violencia", x="¿Usted cree que puede ser víctima de robo con violencia?")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+theme(legend.position = "none")
+                   y= ..prop.. ), stat= "count", vjust = -.5) + labs(y = "Percent", fill="¿Usted cree que puede ser víctima de robo con violencia?") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title="Porcentaje de victimización por robo con violencia", x="Sexo")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+theme(legend.position = "none")
     
   })
   
    output$data_mapa <- renderPlot({
     ggplot(data_mapa) +
       geom_sf(aes(fill = as.factor(Indicador)))+
-        labs(title = "Mapa de Lima Metropolitana según cluster de victimización",
+        labs(title = "Mapa de Lima Metropolitana de victimización, por PCA",
         caption = "Fuente: INEI 2017
         Elaboración: Grupo 4",
         x="Longitud",
