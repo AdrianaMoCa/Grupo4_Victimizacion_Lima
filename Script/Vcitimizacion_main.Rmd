@@ -3,7 +3,7 @@ title: "Grupo 4: Percepción de inseguridad en Lima Metropolitana"
 author: "Arriola, G. & Mosqueira, A."
 date: "21/1/2022"
 output:
-  rmdformats::readthedown:
+  rmdformats::material:
   code_folding: show
   self_contained: true
   thumbnails: false
@@ -103,20 +103,19 @@ table(lima$Zona)
 lima$NOMBREDI = gsub("Ã‘", "Ñ", lima$NOMBREDI)
 ```
 
-```{r, include=FALSE}
+```{r, include=TRUE}
 names(lima)[names(lima) == 'C200_P7'] <- 'Sexo'
 names(lima)[names(lima) == 'C300_P4'] <- 'victima_delito'
 names(lima)[names(lima) == 'C300_P5_1'] <- 'Robo_vehiculo'
 names(lima)[names(lima) == 'C300_P5_2'] <- 'Robo_vivienda'
 names(lima)[names(lima) == 'C300_P5_3'] <- 'Robo_sinviolencia'
 names(lima)[names(lima) == 'C300_P5_4'] <- 'Robo_conviolencia'
-names(lima)[names(lima) == 'C300_P11A_1'] <- 'Confianza_PNP'
 
 ```
 
 ```{r, include=TRUE}
 lima$Sexo <- factor(lima$Sexo,
-                          labels = c("Hombre", "Mujer")) # Respetar el orden
+                          labels = c("Hombre", "Mujer"))
 levels(lima$Sexo)
 ```
 
@@ -126,7 +125,7 @@ levels(lima$Sexo)
 
 ```{r, include=TRUE}
 lima$victima_delito <- factor(lima$victima_delito,
-                          labels = c("Sí", "No")) # Respetar el orden
+                          labels = c("Sí", "No"))
 levels(lima$victima_delito)
 ```
 
@@ -135,7 +134,8 @@ library(scales)
 ```
 
 ```{r, include=TRUE}
-lima |> 
+lima |>
+  filter(!is.na(Zona)) |> 
   ggplot(aes(x= victima_delito,  group=Zona)) + 
   geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
   geom_text(aes( label = scales::percent(..prop..),y= ..prop.. ), stat= "count", vjust = -.5) +
@@ -153,6 +153,7 @@ lima |>
 ```{r, include=TRUE}
 vict_sexo <- lima[lima$victima_delito %in% c("Sí"),]
 vict_sexo |> 
+  filter(!is.na(Zona)) |>
   ggplot(aes(x= Sexo,  group= victima_delito)) + 
   geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
   geom_text(aes( label = scales::percent(..prop..),y= ..prop.. ), stat= "count", vjust = -.5) +
@@ -171,30 +172,44 @@ vict_sexo |>
 ### En el caso del robo de vehículo, existe una clara diferencia entre Lima Moderna y el resto de sectores de Lima Metropolitana. En Lima Moderna cerca del 30% de encuestados manifestaron que sí sienten que pueden ser víctimas del robo de su vehículo, mientras que en otros sectores limeños, esta sensación no pasa del 15% de encuestados. 
 
 ```{r, include=FALSE}
+
 lima$Robo_vehiculo <- factor(lima$Robo_vehiculo,
-                          labels = c("No", "Sí")) # Respetar el orden
+                          labels = c("No", "Sí"))
 levels(lima$Robo_vehiculo)
 ```
 
 ```{r, include=TRUE}
-lima |> 
+lima |>
+  filter(!is.na(Zona)) |>
   filter(!is.na(Robo_vehiculo)) |> 
-  ggplot(mapping = aes(x= Robo_vehiculo,  group=Zona)) + 
+  ggplot(aes(x= Robo_vehiculo,  group=Zona)) + 
   geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
-  geom_text(aes( label = scales::percent(..prop..),
-                   y= ..prop.. ), stat= "count", vjust = -.5) + labs(y = "Percent", fill="¿Usted cree que puede ser víctima del robo de su vehículo?") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title="Porcentaje de victimización por robo de vehículo", x="¿Usted cree que puede ser víctima del robo de su vehículo?")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+theme(legend.position = "none")
+  geom_text(aes( label = scales::percent(..prop..),y= ..prop.. ), stat= "count", vjust = -.5) +
+  labs(y = "Percent", fill="¿Usted cree ser víctima del robo de su vehículo?") + 
+  facet_grid(~Zona) + 
+  scale_y_continuous(labels=percent)+
+  labs(title="Porcentaje de victimización por robo de vehículo", x="¿Usted cree que puede ser víctima del robo de su vehículo?")+ 
+  scale_fill_brewer(palette = "Set1") +
+  theme(legend.position = "bottom")+ 
+  theme(legend.position = "none")
 ```
 
-### Además al analizar la victimización por robo de vehículo, por sexo, se encontró que existe una mayor percepción de inseguridad por parte de las hombres, principalmente en las zonas de Lima este, donde el 60.54% de hombres señala sentirse más propensos a ser sufrir el robo de sus vehículos, mientras que el porcentaje de mujeres es de 39.46%. Este porcentaje, para los hombres, es mayor en Lima norte (61.68%), mientras que para las mujeres es menor (38.32%).
+### Además al analizar la victimización por robo de vehículo, por sexo, se encontró que existe una mayor percepción de inseguridad por parte de las hombres, principalmente en las zonas de Lima Norte, donde el 61.67% de hombres señala sentirse más propensos a ser sufrir el robo de sus vehículos, mientras que el porcentaje de mujeres es de 39.46%. Este porcentaje, para los hombres, es mayor en Lima norte (61.68%), mientras que para las mujeres es menor (38.32%).
 
 ```{r, include=TRUE}
 vehi_sexo <- lima[lima$Robo_vehiculo %in% c("Sí"),]
-vehi_sexo |> 
-  filter(!is.na(Robo_vehiculo)) |> 
-  ggplot(mapping = aes(x=Sexo ,  group=Robo_vehiculo)) + 
+vehi_sexo |>
+  filter(!is.na(Zona)) |> 
+  ggplot(aes(x= Sexo,  group=Zona)) + 
   geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
-  geom_text(aes( label = scales::percent(..prop..),
-                   y= ..prop.. ), stat= "count", vjust = -.5) + labs(y = "Percent", fill="¿Usted cree que puede ser víctima del robo de su vehículo?") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title="Porcentaje de victimización por robo de vehículo", x="¿Usted cree que puede ser víctima del robo de su vehículo?")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+theme(legend.position = "none")
+  geom_text(aes( label = scales::percent(..prop..),y= ..prop.. ), stat= "count", vjust = -.5) +
+  labs(y = "Percent", fill="¿Usted cree ser víctima del robo de su vehículo?") + 
+  facet_grid(~Zona) + 
+  scale_y_continuous(labels=percent)+
+  labs(title="Porcentaje de victimización por robo de vehículo por sexo", x="¿Usted cree que puede ser del robo de su vehículo?")+ 
+  scale_fill_brewer(palette = "Set1") +
+  theme(legend.position = "bottom")+ 
+  theme(legend.position = "none")
 ```
 
 ## Victimización por robo de vivienda 
@@ -203,30 +218,37 @@ vehi_sexo |>
 
 ```{r, include=FALSE}
 lima$Robo_vivienda <- factor(lima$Robo_vivienda,
-                          labels = c("No", "Sí")) # Respetar el orden
+                          labels = c("No", "Sí")) 
 levels(lima$Robo_vivienda)
 ```
 
 ```{r, include=TRUE}
-lima |> 
+lima |>
+  filter(!is.na(Zona)) |>
   filter(!is.na(Robo_vivienda)) |> 
-  ggplot(lima, mapping = aes(x= Robo_vivienda,  group=Zona)) + 
+  ggplot(aes(x= Robo_vivienda,  group=Zona)) + 
   geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
-  geom_text(aes( label = scales::percent(..prop..),
-                   y= ..prop.. ), stat= "count", vjust = -.5) + labs(y = "Percent", fill="¿Usted cree que puede ser víctima del robo de su vehículo?") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title="Porcentaje de victimización por robo de vivienda", x="¿Usted cree que puede ser víctima del robo de su vivienda?")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+theme(legend.position = "none")
+  geom_text(aes( label = scales::percent(..prop..),y= ..prop.. ), stat= "count", vjust = -.5) +
+  labs(y = "Percent", fill="¿Usted cree ser víctima del robo de su vivienda?") + 
+  facet_grid(~Zona) + 
+  scale_y_continuous(labels=percent)+
+  labs(title="Porcentaje de victimización por robo de vivienda", x="¿Usted cree que puede ser víctima del robo de su vivienda?")+ 
+  scale_fill_brewer(palette = "Set1") +
+  theme(legend.position = "bottom")+ 
+  theme(legend.position = "none")
 ```
 
 ### Además, al realizar el análisis por sexo, se identifica una mayor percepción de victimización por robo de vivienda por parte de las mujeres en todas las zonas, principalmente en Lima moderna, donde la diferencia entre hombres (44.25%) y mujeres (55.75%) es de 11.5%. Mientras que la zona que muestra una menor diferencia es Lima sur, con 1.94%. Las demás zonas muestran en promedio una diferencia del 5.06%.
 
 ```{r, include=TRUE}
 vivi_sexo <- lima[lima$Robo_vivienda %in% c("Sí"),]
-
 vivi_sexo |> 
-  filter(!is.na(Robo_vivienda)) |> 
+  filter(!is.na(Zona)) |>
+  filter(!is.na(Robo_vehiculo)) |>
   ggplot(lima, mapping = aes(x= Sexo,  group=Robo_vivienda)) + 
   geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
   geom_text(aes( label = scales::percent(..prop..),
-                   y= ..prop.. ), stat= "count", vjust = -.5) + labs(y = "Percent", fill="¿Usted cree que puede ser víctima del robo de su vehículo?") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title="Porcentaje de victimización por robo de vivienda", x="¿Usted cree que puede ser víctima del robo de su vivienda?")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+theme(legend.position = "none")
+                   y= ..prop.. ), stat= "count", vjust = -.5) + labs(y = "Percent", fill="¿Usted cree que puede ser víctima del robo de su vehículo?") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title="Porcentaje de victimización por robo de vivienda por sexo", x="¿Usted cree que puede ser víctima del robo de su vivienda?")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+theme(legend.position = "none")
 ```
 
 
@@ -237,13 +259,14 @@ vivi_sexo |>
 
 ```{r, include=FALSE}
 lima$Robo_sinviolencia <- factor(lima$Robo_sinviolencia,
-                          labels = c("No", "Sí")) # Respetar el orden
+                          labels = c("No", "Sí")) 
 levels(lima$Robo_sinviolencia)
 ```
 
 
 ```{r, include=TRUE}
 lima |> 
+  filter(!is.na(Zona)) |>
   filter(!is.na(Robo_sinviolencia)) |> 
   ggplot(lima, mapping = aes(x= Robo_sinviolencia,  group=Zona)) + 
   geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
@@ -257,8 +280,9 @@ lima |>
 robosinviol_sexo <- lima[lima$Robo_sinviolencia %in% c("Sí"),]
 
 robosinviol_sexo |> 
+  filter(!is.na(Zona)) |>
   filter(!is.na(Robo_sinviolencia)) |> 
-  ggplot(lima, mapping = aes(x= Sexo,  group=Robo_sinviolencia)) + 
+  ggplot(mapping = aes(x= Sexo,  group=Zona)) + 
   geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
   geom_text(aes( label = scales::percent(..prop..),
                    y= ..prop.. ), stat= "count", vjust = -.5) + labs(y = "Percent", fill="¿Usted cree que puede ser víctima de robo sin violencia?") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title="Porcentaje de victimización por robo sin violencia", x="¿Usted cree que puede ser víctima de robo sin violencia?")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+theme(legend.position = "none")
@@ -271,35 +295,36 @@ robosinviol_sexo |>
 
 ```{r, include=FALSE}
 lima$Robo_conviolencia <- factor(lima$Robo_conviolencia,
-                          labels = c("No", "Sí")) # Respetar el orden
+                          labels = c("No", "Sí"))
 levels(lima$Robo_conviolencia)
 ```
 
 
 ```{r, include=TRUE}
 lima |> 
+  filter(!is.na(Zona)) |>
   filter(!is.na(Robo_conviolencia)) |> 
   ggplot(lima, mapping = aes(x= Robo_conviolencia,  group=Zona)) + 
-  geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
-  geom_text(aes( label = scales::percent(..prop..),
-                   y= ..prop.. ), stat= "count", vjust = -.5) + labs(y = "Percent", fill="¿Usted cree que puede ser víctima de robo con violencia?") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title="Porcentaje de victimización por robo con violenciaa", x="¿Usted cree que puede ser víctima de robo con violencia?")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+theme(legend.position = "none")
-```
-
-### Además, al realizar el análisis por sexo, se identifica una mayor percepción de victimización por parte de las mujeres en todas las zonas de Lima Metropolitana, excepto Lima Centro. Destaca nuevamente el caso de Lima Moderna con una diferencia de cerca al 10%. 
-
-```{r, include=TRUE}
-roboconviol_sexo <- lima[lima$Robo_conviolencia %in% c("Sí"),]
-
-roboconviol_sexo |> 
-  filter(!is.na(Robo_conviolencia)) |> 
-  ggplot(lima, mapping = aes(x= Sexo,  group=Robo_conviolencia)) + 
   geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
   geom_text(aes( label = scales::percent(..prop..),
                    y= ..prop.. ), stat= "count", vjust = -.5) + labs(y = "Percent", fill="¿Usted cree que puede ser víctima de robo con violencia?") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title="Porcentaje de victimización por robo con violencia", x="¿Usted cree que puede ser víctima de robo con violencia?")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+theme(legend.position = "none")
 ```
 
+### Además, al realizar el análisis por sexo, se identifica una mayor percepción de victimización por parte de las mujeres en todas las zonas de Lima Metropolitana, excepto Lima Centro. Destaca nuevamente el caso de Lima Moderna con una diferencia de 8.3%. 
 
-# Construyendo un indicador de percepción de inseguridad en Lima Metropolitana por distrito
+```{r, include=TRUE}
+roboconviol_sexo <- lima[lima$Robo_conviolencia %in% c("Sí"),]
+roboconviol_sexo |> 
+  filter(!is.na(Zona)) |>
+  filter(!is.na(Robo_conviolencia)) |> 
+  ggplot(lima, mapping = aes(x= Sexo,  group=Robo_conviolencia)) + 
+  geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
+  geom_text(aes( label = scales::percent(..prop..),
+                   y= ..prop.. ), stat= "count", vjust = -.5) + labs(y = "Percent", fill="¿Usted cree que puede ser víctima de robo con violencia?") + facet_grid(~Zona) + scale_y_continuous(labels=percent)+labs(title="Porcentaje de victimización por robo con violencia por sexo", x="¿Usted cree que puede ser víctima de robo con violencia?")+ scale_fill_brewer(palette = "Set1")+theme(legend.position = "bottom")+theme(legend.position = "none")
+```
+
+
+# Construyendo un indicador de percepción de inseguridad en Lima Metropolitana por distrito (PCA)
 
 
 ## Primero contruimos nuestra base de datos por distrito
@@ -490,7 +515,6 @@ KMO(vict_dist_1)
 ```{r}
 library(rela)
 library(factoextra)
-library(psych)
 ```
 
 ```{r}
@@ -519,7 +543,7 @@ pc <- prcomp(x=vict_dist_1,scale=TRUE, center=TRUE)
 names(pc)
 ```
 
-# Luego, analizamos los componentes principales calculados
+### Luego, analizamos los componentes principales calculados
 
 ```{r}
 summary(pc) 
@@ -561,9 +585,6 @@ vict_final <- vict_dist |>
 names(vict_final)[names(vict_final) == 'pc1'] <- 'Indicador'
 ```
 
-
-## Tabla de distritos con mayor sensación de inseguridad por delitos patrimoniales
-
 ### Observamos que los 5 distritos con mayor percepción de inseguridad por delitos patrimoniales son San Juan de Lurigancho, Comas, San Martín de Porres, Villa María del Triunfo y Santiago de Surco. 
 
 ```{r}
@@ -577,10 +598,11 @@ vict_final |>
   arrange(desc(Indicador)) |> 
   kable() |> 
   kable_styling()
+
 ```
 
 
-## Mapa Distrital de Lima Metropolitana
+# Mapa Distrital de Lima Metropolitana del índice sensación de inseguridad (PCA)
 
 ### Para una mejor visualización del indicador 
 
@@ -600,13 +622,7 @@ peru<-st_as_sf(spdf) # Lo convertimos a tipo sf para mayor facilidad
 
 ```{r}
 shp_lima <- peru |> 
-  filter(DEPARTAMEN == "LIMA")
-```
-
-```{r}
-#export(shp_lima,"shp_lima.json")
-#link_shp_lima="https://github.com/AdrianaMosqueira/Grupo4_Victimizacion_Lima/raw/main/Data/shp_lima.json"
-#shp_lima = import(link_shp_lima)
+  filter(PROVINCIA == "LIMA")
 ```
 
 ```{r}
@@ -625,16 +641,25 @@ data_mapa <- shp_lima  |>
   left_join(vict_final)
 ```
 
+
 ```{r}
-ggplot(data_mapa) +
-  geom_sf(aes(fill = as.factor(Indicador)))+
-  labs(title = "Mapa de Lima Metropolitana de victimización por PCA",
+data_mapa |> 
+  ggplot(aes(fill = Indicador)) +
+  geom_sf(colour = "grey75", size = 0.07) +
+  labs(title = "Mapa de sensación de inseguridad en Lima Metropolitana (PCA)",
        caption = "Fuente: INEI 2017
        Elaboración: Grupo 4",
        x="Longitud",
        y="Latitud") +
-  scale_fill_discrete(name = "Clusters")
+  scale_fill_gradient2("Sensación de inseguridad", high= "red", mid = "orange", low = "white") +
+  theme_bw()
 ```
+
+### De acuerdo al mapa, el distrito con mayor índice de sensación de inseguridad por delitos patrimoniales es San Juan de Lurigancho, destacando muy por encima de los demas distritos. Seguido de ello, se tiene a Comas, San Martín de Porres, Villa María del Triunfo y Santiago de Surco. Por último, los distritos con menos nivel de sensación de inseguridad son Pucusana, Santa Rosa y Punta Hermosa. 
+
+
+# Ahora creamos clusters
+
 
 # Método no jerárquico (partición por medoides)
 
@@ -647,16 +672,6 @@ library(rgl)
 ```
 
 ```{r}
-#library(NbClust)
-```
-
-```{r}
-## Para identificar el número de clusters ideal
-#resnumclust<-NbClust(vict_dist_1, distance = "euclidean", min.nc=2, #max.nc=10, method = "ward.D", index = "alllong")
-#fviz_nbclust(resnumclust)
-```
-
-```{r}
 medoides = vict_dist
 ```
 
@@ -666,7 +681,7 @@ distancias= daisy(vict_dist_1, metric="gower")
 
 ```{r}
 fviz_nbclust(vict_dist_1, pam,diss=distancias,method = "silhouette",k.max = 10,verbose = F)
-particion = pam(distancias,2,cluster.only = F)
+particion = pam(distancias,3,cluster.only = F)
 ```
 
 ```{r}
@@ -686,7 +701,7 @@ vict_dist_1 |> mutate(particion=particion$clustering) |>
 ```{r}
 medoides$particion = particion$clustering
 medoides$particion = as.factor(medoides$particion)
-levels(medoides$particion) = c("Alto nivel de victimización", "Bajo nivel de victimización")
+levels(medoides$particion) = c("Alto nivel de victimización", "Moderado nivel de victimización", "Bajo nivel de victimización")
 table(medoides$particion)
 ```
 
@@ -696,7 +711,7 @@ fviz_cluster(object = list(data=vict_dist_1[,1:4], cluster = medoides$particion)
              ellipse.type = "convex")
 ```
 
-## Mapa de clasificación por baja o alta victmización (Medoides)
+## Mapa de clasificación por bajo, moderado y alto nivel de victimización (Medoides)
 
 ```{r}
 names(medoides)[names(medoides) == 'NOMBREDI'] <- 'DISTRITO'
@@ -718,14 +733,17 @@ ggplot(data_mapa1) +
   scale_fill_discrete(name = "Clusters")
 ```
 
-# Métod Jerárquico (Divisivo)
+### De acuerdo al mapa (método no jerárquico - mediodes), si se conforman 3 clústers de acuerdo al nivel de víctimización, se tiene que la mayoría de distritos se agruparían como nivel alto (19 distritos). Seguido de ello, estarían aquellos con nivel moderado (17 distritos); y por último los de nivel bajo con sólo 3 distritos. Añadir que bajo este método se obtiene un Average silhouette widht de 0.48. 
+
+
+# Método Jerárquico (Divisivo)
 
 ```{r}
 diana = vict_dist
 ```
 
 ```{r}
-divisivo = hcut(distancias, k = 2,hc_func='diana')
+divisivo = hcut(distancias, k = 3,hc_func='diana')
 ```
 
 ```{r}
@@ -739,7 +757,7 @@ fviz_dend(divisivo, rect = TRUE, cex = 0.5)
 ```{r}
 diana$divisivo = divisivo$cluster
 diana$divisivo = as.factor(diana$divisivo)
-levels(diana$divisivo) = c("Bajo nivel de victimización", "Alto nivel de victimización")
+levels(diana$divisivo) = c("Moderado nivel de victimización", "Bajo nivel de victimización", "Alto nivel de victimización")
 table(diana$divisivo)
 ```
 
@@ -749,7 +767,7 @@ fviz_cluster(object = list(data=vict_dist_1[,1:4], cluster = diana$divisivo),
              ellipse.type = "convex")
 ```
 
-## Mapa de clasificación por baja o alta victmización (diana)
+## Mapa de clasificación por bajo, moderado y alto nivel de victmización (diana)
 
 ```{r}
 names(diana)[names(diana) == 'NOMBREDI'] <- 'DISTRITO'
@@ -770,6 +788,10 @@ ggplot(data_mapa2) +
        y="Latitud") +
   scale_fill_discrete(name = "Clusters")
 ```
+
+### De acuerdo al mapa (método jerárquico - divisivo), si se conforman 3 clústers de acuerdo al nivel de víctimización, se tiene que sólo un distrito se agruparía como nivel alto (San Juan de Lurigancho). Seguido de ello, estarían aquellos con nivel moderado, los cuales son la mayoría (35 distritos); y por último los de nivel bajo con sólo 3 distritos. Añadir que bajo este método se obtiene un Average silhouette widht de 0.56. 
+
+### Este último mapa bajo el método jerárquico - divisivo va en línea con el indicador realizado a través del Análisis de Componentes Principales. 
 
 
 # Bibliografía
